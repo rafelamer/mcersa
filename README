@@ -1,0 +1,109 @@
+Filename:   README
+Author:     Rafel Amer (rafel.amer AT upc.edu)
+Copyright:  Rafel Amer 2018
+Disclaimer: This code is presented "as is" and it has been written to 
+            implement the RSA encryption and decryption algorithm for 
+            educational purposes and should not be used in contexts that 
+            need cryptographically secure implementation
+	    
+License:    This library  is free software; you can redistribute it and/or
+            modify it under the terms of either:
+
+            * the GNU Lesser General Public License as published by the Free
+              Software Foundation; either version 3 of the License, or (at your
+              option) any later version.
+
+            or
+
+            * the GNU General Public License as published by the Free Software
+              Foundation; either version 2 of the License, or (at your option)
+	      any later version.
+
+	    See https://www.gnu.org/licenses/
+
+
+The files oaep.c oaep.h sboxes.c tiger.c and tiger.h are obtained from
+
+https://github.com/Rupan/rsa
+
+The README file from de repository says:
+
+This repository contains code which implements several crypto operations:
+
+ * perform EME-OAEP encoding, as specified in PKCS#1 version 2.1, using the Tiger hash
+ * perform RSA encryption, decryption, and signing operations using the GMP library [TODO]
+
+To test the oaep code, do this:
+
+ $ gcc -O0 -ggdb -Wall -W -DTEST tiger.o sboxes.o oaep.c -o oaep && ./oaep SomeRandomString
+
+Notes:
+
+To use the OAEP interface, see documentation in oaep.h.
+The Tiger code provided herein is largely unmodified from the reference implementation:
+
+ http://www.cs.technion.ac.il/~biham/Reports/Tiger/
+
+
+
+
+The files  aes.[ch] des.[ch] md5.[ch] sha1.[ch] arcfour.[ch] blowfish.[ch]
+md2.[ch] rot-13.[ch] sha256.[ch] sboxes.[ch]
+are from
+
+https://github.com/B-Con/crypto-algorithms
+
+The README file from de repository says:
+
+crypto-algorithms
+About
+
+These are basic implementations of standard cryptography algorithms, written by Brad Conte (brad@bradconte.com) from
+scratch and without any cross-licensing. They exist to provide publically accessible, restriction-free implementations
+of popular cryptographic algorithms, like AES and SHA-1. These are primarily intended for educational and pragmatic
+purposes (such as comparing a specification to actual implementation code, or for building an internal application
+that computes test vectors for a product). The algorithms have been tested against standard test vectors.
+
+This code is released into the public domain free of any restrictions. The author requests acknowledgement if the
+code is used, but does not require it. This code is provided free of any liability and without any quality
+claims by the author.
+
+Note that these are not cryptographically secure implementations. They have no resistence to side-channel attacks and
+should not be used in contexts that need cryptographically secure implementations.
+
+These algorithms are not optimized for speed or space. They are primarily designed to be easy to read, although
+some basic optimization techniques have been employed.
+
+Building
+
+The source code for each algorithm will come in a pair of a source code file and a header file. There should be
+no inter-header file dependencies, no additional libraries, no platform-specific header files, or any other
+complicating matters. Compiling them should be as easy as adding the relevent source code to the project.
+
+
+
+I have dowloaded the file pkcs5_pbkdf2.c is from http://bxr.su/OpenBSD/lib/libutil/pkcs5_pbkdf2.c
+See also the list of List of PBKDF2 implementations in https://en.wikipedia.org/wiki/List_of_PBKDF2_implementations.
+Also, I have done some minor modifications in pkcs5_pbkdf2.c so that I can compile it in Linux.  
+
+
+
+Bibliography:
+
+(1) Handbook of Applied Cryptography
+    Alfred J. Menezes, ‎Paul C. van Oorschot and   Scott A. Vanstone
+    CRC Press; 1 edition
+    1996
+    ISBN: 0849385237
+
+(2) Applied Cryptography: Protocols, Algorithms and Source Code in C
+    Bruce Schneier
+    Wiley; 1 edition
+    2015
+    ISBN: 1119096723
+
+(3) Introduction to Modern Cryptography
+    Jonathan Katz and Yehuda Lindell
+    Chapman and Hall/CRC; 2 edition
+    2014
+    ISBN: 1466570261

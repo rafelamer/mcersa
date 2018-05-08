@@ -1,0 +1,750 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass paper
+\begin_preamble
+\renewcommand{\arraystretch}{1.15}
+\setlength{\tabcolsep}{6mm}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language british
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "times" "default"
+\font_sans "helvet" "default"
+\font_typewriter "courier" "default"
+\font_math "auto" "auto"
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 95 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Índex
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 2cm
+\rightmargin 2cm
+\bottommargin 3cm
+\headheight 0cm
+\headsep 12cm
+\footskip 18cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation skip
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 2
+\paperpagestyle headings
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+DER Encoding
+\end_layout
+
+\begin_layout Standard
+DER (Distinguished Encoding Rules) is a restricted variant of BER for producing
+ unequivocal transfer syntax for data structures described by ASN.1.
+ Like CER, DER encodings are valid BER encodings.
+ DER is the same thing as BER with all but one sender's options removed.
+\end_layout
+
+\begin_layout Standard
+DER is a subset of BER providing for exactly one way to encode an ASN.1 value.
+ DER is intended for situations when a unique encoding is needed, such as
+ in cryptography, and ensures that a data structure that needs to be digitally
+ signed produces a unique serialized representation.
+ DER can be considered a canonical form of BER.
+ For example, in BER a Boolean value of true can be encoded as any of 255
+ non-zero byte values, while in DER there is one way to encode a boolean
+ value of true.
+\end_layout
+
+\begin_layout Standard
+Applying an encoding rule to the data structures described by an abstract
+ syntax provides a transfer syntax that governs how bytes in a stream are
+ organized when sent between computers.
+ The transfer syntax used by DER always follows a 
+\emph on
+Tag
+\emph default
+, 
+\emph on
+Length
+\emph default
+, 
+\emph on
+Value format
+\emph default
+ (TLV).
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="1" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Tag byte
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Length
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The following table lists some of the data types supported and the tag byte
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="11" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Tag bye
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BIT STRING
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x03
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BOOLEAN
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x01
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INTEGER
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x02
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+NULL
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x05
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OBJECT IDENTIFIER
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x06
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+OCTET STRING
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x04
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SEQUENCE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x30
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SET
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x31
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+UTF8String
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x0C
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PrintableString
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family typewriter
+0x13
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Every byte contains 8 bits and can be represented with 8 digits (zeros or
+ ones).
+ For example, the byte 
+\family typewriter
+01011101
+\family default
+ can be wrritten as 
+\family typewriter
+0x5D
+\family default
+ in hexadecomal format and 
+\family typewriter
+93
+\family default
+ in decimal or base 10.
+ We will say that the first bit is the left most bit anf the last bit is
+ the rigth most.
+ 
+\begin_inset Formula 
+\[
+\begin{array}{rl}
+0101 & =1\cdot1+0\cdot2^{1}+1\cdot2^{2}+0\cdot2^{3}=5\\
+1101 & =1\cdot1+0\cdot2^{1}+1\cdot2^{2}+1\cdot2^{3}=13=D\\
+0101\quad1101 & =13\cdot16+5=93
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Encoding lengths and values
+\end_layout
+
+\begin_layout Standard
+The Length field in a TLV triplet identifies the number of bytes encoded
+ in the Value field.
+ If the length to encode is less than 128, we need only one byte: the last
+ bit is 
+\family typewriter
+0
+\family default
+ and the the remaining seven bits stores the length.
+\end_layout
+
+\begin_layout Standard
+If the length 
+\begin_inset Formula $L$
+\end_inset
+
+ satisfies 
+\begin_inset Formula $128\leq L\leq256^{126}$
+\end_inset
+
+, then the first bit of the first byte is 
+\family typewriter
+0
+\family default
+ and the remaining seven bits stores the number of bytes needed to represent
+ 
+\begin_inset Formula $L$
+\end_inset
+
+.
+ Next the value 
+\begin_inset Formula $L$
+\end_inset
+
+ is stored starting by the most significant byte.
+\end_layout
+
+\begin_layout Standard
+The value is stored as a list of bytes.
+ For integers, we start with the most significant byte.
+\end_layout
+
+\begin_layout Subsection
+Examples
+\end_layout
+
+\begin_layout Standard
+We want to encode the integer 
+\begin_inset Formula $n=3656838764234$
+\end_inset
+
+, we write it in base 
+\begin_inset Formula $b=256$
+\end_inset
+
+,
+\begin_inset Formula 
+\[
+n=202+86b+147b^{2}+108b^{3}+83b^{4}+3b^{5}
+\]
+
+\end_inset
+
+and we need 5 bytes to encode the value, i.
+ e., the length is 5.
+ Then, the integer is encode with 7 bytes,
+\begin_inset Formula 
+\[
+\begin{array}{|c|c|c|c|c|c|c|c|}
+\hline 2 & 5 & 3 & 83 & 108 & 147 & 86 & 202\\\hline \end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If the most significant byte of 
+\begin_inset Formula $n$
+\end_inset
+
+ (in our case 
+\begin_inset Formula $3$
+\end_inset
+
+) is bigger than 
+\begin_inset Formula $127$
+\end_inset
+
+, we have to add an extra byte with the value 0x00 before it.
+\end_layout
+
+\begin_layout Standard
+In the second example, we want to encode binary data formed by 
+\begin_inset Formula $2935117$
+\end_inset
+
+ bytes.
+ First we have to encode the length 
+\begin_inset Formula $L=2935117$
+\end_inset
+
+; since 
+\begin_inset Formula $L$
+\end_inset
+
+ is bigger than 
+\begin_inset Formula $127$
+\end_inset
+
+, we write
+\begin_inset Formula 
+\[
+L=77+201b+44b^{2}
+\]
+
+\end_inset
+
+and we need 3 bytes to encode the length value.
+ Then, the binary data can be encoded as follows:
+\begin_inset Formula 
+\[
+\begin{array}{|c|c|c|c|c|c|}
+\hline 4 & 3 & 44 & 201 & 77 & \mathrm{2935117\text{ bytes of data.......}}\\\hline \end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+The rsaEncription Obeject Identifier
+\end_layout
+
+\begin_layout Standard
+In RFC3279, 
+\emph on
+Algorithms and Identifiers for the Internet X.509 Public Key Infrastructure
+ Certificate and Certificate Revocation List (CRL) Profile
+\emph default
+, the OID rsaEncrytion is defined 
+\end_layout
+
+\begin_layout Verbatim
+rsaEncryption OBJECT IDENTIFIER ::= { iso(1) member-body(2) us(840)
+\end_layout
+
+\begin_layout Verbatim
+                        rsadsi(113549) pkcs(1) pkcs-1(1) 1 }
+\end_layout
+
+\begin_layout Standard
+or 1.2.840.113549.1.1.1.
+\end_layout
+
+\begin_layout Standard
+The explanation can be found in 
+\begin_inset CommandInset href
+LatexCommand href
+name "https://crypto.stackexchange.com"
+target "https://crypto.stackexchange.com/questions/29115/how-is-oid-2a-86-48-86-f7-0d-parsed-as-1-2-840-113549"
+
+\end_inset
+
+.
+ The first numbers 1.2 are encoded in one byte
+\family typewriter
+ 0x2A
+\family default
+, since 
+\begin_inset Formula $1\cdot40+2=42=00101010=\mathtt{0x2A}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In base 2, 
+\begin_inset Formula $840=1101001000$
+\end_inset
+
+, we split this number in 7 bit blocks starting from the right
+\begin_inset Formula 
+\[
+0000110\quad1001000
+\]
+
+\end_inset
+
+and we add an eighth bit 0 to the last block and 1 to the first 
+\begin_inset Formula 
+\[
+10000110\quad01001000.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In decimal form this numbers are 
+\begin_inset Formula $134=\mathtt{0x86}$
+\end_inset
+
+ and 
+\begin_inset Formula $72=\mathtt{0x48}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Similarly, 
+\begin_inset Formula $113549=11011101110001101$
+\end_inset
+
+, we split in
+\begin_inset Formula 
+\[
+000110\quad1110111\quad0001101
+\]
+
+\end_inset
+
+and we add an eighth bit 0 to the last block and 1 to the first two
+\begin_inset Formula 
+\[
+1000110\quad11110111\quad00001101.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In decimal form this numbers are 
+\begin_inset Formula $134=\mathtt{0x86}$
+\end_inset
+
+, 
+\begin_inset Formula $247=\mathtt{0xF7}$
+\end_inset
+
+ and 
+\begin_inset Formula $13=\mathtt{0x0D}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Then 1.2.840.113549.1.1.1 is encode as an Object Identifier of length 9,
+\begin_inset Formula 
+\[
+\mathtt{0x06\;0x09\;0x2A\;0x86\;0x48\;0x86\;0xF7\;0x0D\;0x01\;0x01\;0x01}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Finally, all is encoded as a sequence of length 
+\begin_inset Formula $13=\mathtt{0x0D}$
+\end_inset
+
+ formed by the previous object and a NULL,
+\begin_inset Formula 
+\[
+\mathtt{0x30\;0x0D\;0x06\;0x09\;0x2A\;0x86\;0x48\;0x86\;0xF7\;0x0D\;0x01\;0x01\;0x01\;0x00\;0x00}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

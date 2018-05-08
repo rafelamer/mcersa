@@ -1,0 +1,54 @@
+Filename:   INSTALL
+Author:     Rafel Amer (rafel.amer AT upc.edu)
+Copyright:  Rafel Amer 2018
+Disclaimer: This code is presented "as is" and it has been written to 
+            implement the RSA encryption and decryption algorithm for 
+            educational purposes and should not be used in contexts that 
+            need cryptographically secure implementation
+	    
+License:    This library  is free software; you can redistribute it and/or
+            modify it under the terms of either:
+
+            * the GNU Lesser General Public License as published by the Free
+              Software Foundation; either version 3 of the License, or (at your
+              option) any later version.
+
+            or
+
+            * the GNU General Public License as published by the Free Software
+              Foundation; either version 2 of the License, or (at your option)
+	      any later version.
+
+	    See https://www.gnu.org/licenses/
+
+You can compile this code in Linux, OS X, FreeBSD, SunOS and Fiwix.
+In the folder mcersa-1.0.0 type
+
+$ make
+$ sudo make install
+
+and the shared library is installed in /usr/local/lib and include files in
+/usr/local/include/mce
+
+Notes:
+
+- In FreeBSD and SunOS you must use gmake instead of make
+
+- In Fiwix, a static library is installed
+
+- In OS X you must intall the gcc compiler. Type gcc in a terminal and if the compiler
+is not installed, you will get a window saying that "The gcc command requires the 
+command line developer tools. Would you like to install the tools now?"
+
+Click "Install"
+
+- In SunOS you need to do
+$ export LD_LIBRARY_PATH=/usr/local/lib
+
+
+- In the folders dertests, crypttests and rsatests, you can find some examples of
+use of the library. I encourage you to write a complet program that uses the different
+functions of the library.
+
+Rafel Amer
+Thecnic University of Catalonia

@@ -64,7 +64,7 @@ int signStackRSA(Stack st,PrivateRSAKey rsa,char *filename,uint8_t mode)
 		goto final;
 	freeString(text);
 
-	if (! stWriteOctetString(st,filename,strlen(filename)))
+	if (! stWriteOctetString(st,(unsigned char *)filename,strlen(filename)))
 		goto final;
 
 	ndigits = (SHA512_DIGEST_SIZE + BYTES_PER_DIGIT - 1) / BYTES_PER_DIGIT;
@@ -155,7 +155,7 @@ int verifyAndExtractStackRSA(Stack st,PublicRSAKey rsa,uint8_t mode)
 
 	sha512(text,length,digest + SHA512_DIGEST_SIZE);
 
-	if (strncmp(digest,digest + SHA512_DIGEST_SIZE,SHA512_DIGEST_SIZE) != 0)
+	if (strncmp((char *)digest,(char *)digest + SHA512_DIGEST_SIZE,SHA512_DIGEST_SIZE) != 0)
 	{
 		ret = SIGNATURE_BAD;
 		goto final;

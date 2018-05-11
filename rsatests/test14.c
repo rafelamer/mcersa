@@ -15,12 +15,6 @@ int main(int argc, char **argv)
 	if ((r1 = bdReadPrivateRSAKeyFromFile("mce.key")) == NULL)
 		goto final;
 
-	/*
-	   size_t nbytes;
-	   nbytes = spBytesInBD(r1->pub->n);
-	   if ((m = spRandomBD(nbytes - 2 * hLen - 3)) == NULL)
-	   goto final;
-	 */
 	if ((m = spReadBDFromFile("M.txt")) == NULL)
 		goto final;
 

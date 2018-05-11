@@ -48,7 +48,7 @@ The Tiger code provided herein is largely unmodified from the reference implemen
 
 
 The files  aes.[ch] des.[ch] md5.[ch] sha1.[ch] arcfour.[ch] blowfish.[ch]
-md2.[ch] rot-13.[ch] sha256.[ch] sboxes.[ch]
+md2.[ch] rot-13.[ch] sboxes.[ch]
 are from
 
 https://github.com/B-Con/crypto-algorithms
@@ -85,6 +85,31 @@ complicating matters. Compiling them should be as easy as adding the relevent so
 I have dowloaded the file pkcs5_pbkdf2.c is from http://bxr.su/OpenBSD/lib/libutil/pkcs5_pbkdf2.c
 See also the list of List of PBKDF2 implementations in https://en.wikipedia.org/wiki/List_of_PBKDF2_implementations.
 Also, I have done some minor modifications in pkcs5_pbkdf2.c so that I can compile it in Linux.  
+
+
+The files sha2.h and sha2.c are from
+
+https://github.com/ogay/sha2
+
+Copyright (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the project nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+
+
+
+
+
 
 
 

@@ -44,7 +44,7 @@ int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
 	text = NULL;
 	m = c = NULL;
 	ret = ENCRYPTION_ERROR;
-	if ((st->data == NULL) || (st->used == 0))
+	if ((st == NULL) || (st->data == NULL) || (st->used == 0))
 		goto final;
 	if ((rsa == NULL)
 	    && ((passphrase = getAndVerifyPassphrase(10)) == NULL))
@@ -150,6 +150,7 @@ int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
 		  if ((text = b64_encode(st->data, st->used, &nbytes)) == NULL)
 			  goto final;
 		  stSetDataInStack(st, text, nbytes, nbytes);
+		  text = NULL;
 	  }
 #if 0
 	SAVEDEBUG("debug/rsacryptsequence64.bin", st->data, st->used);
@@ -188,11 +189,12 @@ int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
 	   Decode from Base64
 	 */
 	if (mode & STACKENCODE)
-	  {
-		  if ((text = b64_decode(st->data, st->used, &nbytes)) == NULL)
-			  goto final;
-		  stSetDataInStack(st, text, nbytes, nbytes);
-	  }
+	{
+		if ((text = b64_decode(st->data, st->used, &nbytes)) == NULL)
+			goto final;
+		stSetDataInStack(st, text, nbytes, nbytes);
+		text = NULL;
+	}
 #if 0
 	SAVEDEBUG("debug/de-rsacryptsequence.bin", st->data, st->used);
 #endif

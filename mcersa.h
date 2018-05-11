@@ -64,6 +64,7 @@ typedef uint64_t doubledigit;
 #define DD(n)               ((doubledigit)(n))
 #define freeBD(n)  spFreeBD(&(n))
 #define freeString(s)  spFreeString((char **)(&(s)));
+#define freeZeroData(s,n) spFreeZeroData((char **)(&(s)),(n));
 #define freePrivateRSAKey(r) spFreeRSAPrivateKey(&(r))
 #define freePublicRSAKey(r) spFreeRSAPublicKey(&(r))
 #define freeStack(s)   stFreeStack(&(s))
@@ -112,6 +113,7 @@ void spAugmentDB(BD n);
 void spAugmentInSizeDB(BD n, size_t ndigits);
 void spFreeBD(BD * n);
 void spFreeString(char **s);
+void spFreeZeroData(char **s,size_t length);
 char *getPassword(const char *text);
 char *getAndVerifyPassphrase();
 BD spCopyBD(BD n);
@@ -296,26 +298,6 @@ unsigned char *b64_encode(const unsigned char *src, size_t len,
 unsigned char *b64_decode(const unsigned char *src, size_t len,
 			  size_t * out_len);
 
-/*
-  Encrypt and decrypt Stack with AES
- */
-#define STACKCOMPRESS 1
-#define STACKENCODE   2
-#define STACKSALT     4
-#define ENCRYPTION_OK 0
-#define ENCRYPTION_FILE_NOT_FOUND -1
-#define ENCRYPTION_WRONG_PASSWORD -2
-#define ENCRYPTION_ERROR -3
-#define ENCRYPTION_OPEN_FILE_ERROR -4
-#define ENCRYPTION_PASSWORD_SHORT -5
-#define ENCRYPTION_PUBLIC_KEY_ERROR -6
-#define ENCRYPTION_PRIVATE_KEY_ERROR -7
-#define ENCRYPTION_WRITE_FILE_ERROR -8
-
-int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
-		    uint8_t mode);
-int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
-		    uint8_t mode);
 
 /*
   Text to SHA256
@@ -341,13 +323,46 @@ BD publicEncryptRSA(PublicRSAKey rsa, BD m);
 BD privateDecryptRSA(PrivateRSAKey rsa, BD c);
 BD publicEncryptOAEPRSA(PublicRSAKey rsa, BD m);
 BD privateDecryptOAEPRSA(PrivateRSAKey rsa, BD c);
+BD privateEncryptOAEPRSA(PrivateRSAKey rsa, BD m);
+BD publicDecryptOAEPRSA(PublicRSAKey rsa, BD c);
+
+/*
+  Encrypt and decrypt Stack with AES
+ */
+#define STACKCOMPRESS 1
+#define STACKENCODE   2
+#define STACKSALT     4
+#define ENCRYPTION_OK 0
+#define ENCRYPTION_FILE_NOT_FOUND -1
+#define ENCRYPTION_WRONG_PASSWORD -2
+#define ENCRYPTION_ERROR -3
+#define ENCRYPTION_OPEN_FILE_ERROR -4
+#define ENCRYPTION_PASSWORD_SHORT -5
+#define ENCRYPTION_PUBLIC_KEY_ERROR -6
+#define ENCRYPTION_PRIVATE_KEY_ERROR -7
+#define ENCRYPTION_WRITE_FILE_ERROR -8
+#define SIGNATURE_OK 0
+#define SIGNATURE_ERROR -1
+#define SIGNATURE_BAD -2
+#define SIGNATURE_OPEN_FILE_ERROR -3
+#define SIGNATURE_FILE_NOT_FOUND -4
+
+int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
+        uint8_t mode);
+int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
+        uint8_t mode);
+/*
+  Signatures
+*/
+int signStackRSA(Stack st,PrivateRSAKey rsa,char *filename,uint8_t mode);
+int verifyAndExtractStackRSA(Stack st,PublicRSAKey rsa,uint8_t mode);
 
 /*
   Password-Based Key Derivation Function 2
  */
-int pkcs5_pbkdf2(const char *pass, size_t pass_len, const uint8_t * salt,
-		 size_t salt_len, uint8_t * key, size_t key_len,
-		 unsigned int rounds);
+int pkcs5_pbkdf2(const char *pass, size_t pass_len, const uint8_t *salt,
+		size_t salt_len, uint8_t *key, size_t key_len,
+		unsigned int rounds);
 
 /*
   Usefull for debugging
@@ -361,7 +376,7 @@ int pkcs5_pbkdf2(const char *pass, size_t pass_len, const uint8_t * salt,
   }                                                                     \
   if ((write(_fd_,data,length) != length))                              \
   {                                                                     \
-    printf("Error writing the file %s\n",file);			        \
+    printf("Error writing the file %s\n",file);			                    \
     goto final;                                                         \
   }                                                                     \
   close(_fd_);                                                          \

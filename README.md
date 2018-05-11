@@ -4,9 +4,9 @@ I'm teaching a course about mathematics and computer science at the Technical Un
 
 One of the goals of the project was that my students could study the code and that this was as simple as possible, so that I discarded complex libraries like OpenSSL or GNU GMP. Then, I wrote my own library for educational purposes. I'm not a cryptographer and I'm sure that it has bugs and should not be used  in contexts that need cryptographically secure implementation. Use OpenSSL instead.
 
-To complement the RSA algorithms, I needed some symmetric cryptographic algorithms, so I downloaded different implementations from [https://github.com/Rupan/rsa](https://github.com/Rupan/rsa), [http://www.cs.technion.ac.il/~biham/Reports/Tiger/](http://www.cs.technion.ac.il/~biham/Reports/Tiger/), [https://github.com/B-Con/crypto-algorithms](https://github.com/B-Con/crypto-algorithms) and [http://bxr.su/OpenBSD/lib/libutil/pkcs5_pbkdf2.c](http://bxr.su/OpenBSD/lib/libutil/pkcs5_pbkdf2.c) 
+To complement the RSA algorithms, I needed some symmetric cryptographic algorithms, so I downloaded different implementations from [https://github.com/Rupan/rsa](https://github.com/Rupan/rsa), [http://www.cs.technion.ac.il/~biham/Reports/Tiger/](http://www.cs.technion.ac.il/~biham/Reports/Tiger/), [https://github.com/B-Con/crypto-algorithms](https://github.com/B-Con/crypto-algorithms), [http://bxr.su/OpenBSD/lib/libutil/pkcs5_pbkdf2.c](http://bxr.su/OpenBSD/lib/libutil/pkcs5_pbkdf2.c) and [https://github.com/ogay/sha2](https://github.com/ogay/sha2) 
 
-Thanks to Damien Bergamini, Brad Conte, Eli Biham and Michael Mohr.
+Thanks to Damien Bergamini, Brad Conte, Eli Biham, Michael Mohr and Olivier Gay.
 
 ## Getting Started
 
@@ -56,6 +56,7 @@ I want to acknowledge
 - Brad Conte
 - Eli Biham 
 - Michael Mohr
+- Olivier Gay
 
 I have used some of their code in the project.
 

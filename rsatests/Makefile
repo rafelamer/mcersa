@@ -2,7 +2,7 @@ CFLAGS = -O3 -I.
 CC = gcc
 
 TARGETS = test00 test01 test02 test03 test04 test05 test06 test07 test08 test09 \
-	test10 test11 test12 test13 test14 test15 test16
+	test10 test11 test12 test13 test14 test15 test16 test17
 
 all:
 	$(CC) $(CFLAGS) -o test00 test00.c -lmcersa -lz
@@ -22,9 +22,8 @@ all:
 	$(CC) $(CFLAGS) -o test14 test14.c -lmcersa -lz
 	$(CC) $(CFLAGS) -o test15 test15.c -lmcersa -lz
 	$(CC) $(CFLAGS) -o test16 test16.c -lmcersa -lz
+	$(CC) $(CFLAGS) -o test17 test17.c -lmcersa -lz
 
 
 clean:
 	rm -f $(TARGETS) mce.key mce.pub crmce.key crmce.pub
-
-

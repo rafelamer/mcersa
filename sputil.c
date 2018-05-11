@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
+#include <sha2.h>
 
 BD spAllocBD()
 {
@@ -410,7 +411,15 @@ void spFreeString(char **s)
 {
 	if (*s == NULL)
 		return;
-	memset(*s, 0, strlen(*s));
+	free(*s);
+	*s = NULL;
+}
+
+void spFreeZeroData(char **s,size_t length)
+{
+	if (*s == NULL)
+		return;
+	memset(*s,0,length);
 	free(*s);
 	*s = NULL;
 }
@@ -480,4 +489,13 @@ char *getAndVerifyPassphrase(unsigned int msize)
 	fprintf(stderr,
 		"Passphrase too short. It must have at least 8 characters\n");
 	return NULL;
+}
+
+void textToSHA256(char *text, unsigned char *sha)
+{
+	sha256_ctx ctx;
+
+	sha256_init(&ctx);
+	sha256_update(&ctx, (unsigned char *)text, strlen(text));
+	sha256_final(&ctx, sha);
 }

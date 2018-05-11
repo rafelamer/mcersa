@@ -106,17 +106,20 @@ static unsigned char *clear_rsa_private_info(const unsigned char *string,
 	if (strncmp((char *)begin, "DEK-Info: AES-256-CBC,", 22) != 0)
 		return NULL;
 	begin += 22;
-	if (strlen((char *)begin) < 32)
-		return NULL;
-	for (i = 0; i < 32; i++)
-		salt[i] = *begin++;
-	salt[32] = '\0';
-	while (*begin == '\n')
-		begin++;
 
 	if ((end = (unsigned char *)strstr((char *)begin, erpk)) == NULL)
 		return NULL;
 	*end = '\0';
+
+	for (i = 0; i < 32; i++)
+	{
+		salt[i] = *begin++;
+		if (begin == end)
+			return NULL;
+	}
+	salt[32] = '\0';
+	while (*begin == '\n')
+		begin++;
 	return begin;
 }
 
@@ -414,6 +417,7 @@ PrivateRSAKey bdReadEncryptedPrivateRSAKeyFromFile(const char *filename)
 	st = NULL;
 	text = NULL;
 	ok = 0;
+	memset(salt,0,33);
 	if ((text = readFileBinaryMode(filename, &nbytes, &alloc)) == NULL)
 		goto final;
 	if (nbytes == 0)
@@ -514,12 +518,14 @@ PublicRSAKey bdReadPublicRSAKeyFromFile(const char *filename)
 	READ_BD_FROM_STACK(rsa->n);
 	READ_BD_FROM_STACK(rsa->ek);
 
+	freeStack(st);
 	return rsa;
 
  errorREAD:
 	freePublicRSAKey(rsa);
 	freeString(str);
 	freeString(der);
+	freeStack(st);
 	return NULL;
 }
 

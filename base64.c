@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <sha256.h>
 
 static const unsigned char base64_table[65] =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -132,13 +131,4 @@ unsigned char *b64_decode(const unsigned char *src, size_t len,
 
 	*out_len = pos - out;
 	return out;
-}
-
-void textToSHA256(char *text, unsigned char *sha)
-{
-	SHA256_CTX ctx;
-
-	sha256_init(&ctx);
-	sha256_update(&ctx, (unsigned char *)text, strlen(text));
-	sha256_final(&ctx, sha);
 }

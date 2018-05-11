@@ -222,7 +222,8 @@ unsigned long long stReadInteger(Stack st, int *error)
 
 unsigned char *stReadOctetString(Stack st, size_t * length, int *error)
 {
-	unsigned char b, *str;
+	unsigned char *str;
+	unsigned char b;
 
 	str = NULL;
 	*error = 1;
@@ -232,11 +233,10 @@ unsigned char *stReadOctetString(Stack st, size_t * length, int *error)
 	(st->read)++;
 
 	*length = stReadLength(st, error);
-	if (length == 0)
+	if (*length == 0)
 		return 0;
 
-	if ((str =
-	     (unsigned char *)malloc(*length * sizeof(unsigned char))) == NULL)
+	if ((str = (unsigned char *)malloc(*length * sizeof(unsigned char))) == NULL)
 	  {
 		  *error = 1;
 		  return NULL;
@@ -400,7 +400,11 @@ int stWriteLength(Stack st, size_t length)
 		return 0;
 	if ((len + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, len + 1024))
+		{
+			free(b);
+			b = NULL;
 			return 0;
+		}
 	if (st->used > 0)
 		memmove(st->data + len, st->data, st->used);
 	memcpy(st->data, b, len);
@@ -445,13 +449,19 @@ int stWriteInteger(Stack st, unsigned long long integer)
 	lent += 1 + lenel;
 	if ((lent + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lent + 1024))
+		{
+			free(el);
+			el = NULL;
 			return 0;
+		}
 	if (st->used > 0)
 		memmove(st->data + lent, st->data, st->used);
 	memcpy(st->data + lenel + 1, data + m, BYTES_PER_DIGIT - m + 1);
 	memcpy(st->data + 1, el, lenel);
 	st->data[0] = 0x02;
 	st->used += lent;
+	free(el);
+	el = NULL;
 	return 1;
 }
 
@@ -460,17 +470,27 @@ int stWriteOctetString(Stack st, unsigned char *bytes, size_t nbytes)
 	unsigned char *el;
 	size_t lenel, lent;
 	if ((el = encode_length(nbytes, &lenel)) == NULL)
+	{
+		free(el);
+		el = NULL;
 		return 0;
+	}
 	lent = 1 + lenel + nbytes;
 	if ((lent + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lent + 1024))
+		{
+			free(el);
+			el = NULL;
 			return 0;
+		}
 	if (st->used > 0)
 		memmove(st->data + lent, st->data, st->used);
 	memcpy(st->data + lenel + 1, bytes, nbytes);
 	memcpy(st->data + 1, el, lenel);
 	st->data[0] = 0x04;
 	st->used += lent;
+	free(el);
+	el = NULL;
 	return 1;
 }
 
@@ -479,17 +499,27 @@ int stWriteBitString(Stack st, unsigned char *bytes, size_t nbytes)
 	unsigned char *el;
 	size_t lenel, lent;
 	if ((el = encode_length(nbytes, &lenel)) == NULL)
+	{
+		free(el);
+		el = NULL;
 		return 0;
+	}
 	lent = 1 + lenel + nbytes;
 	if ((lent + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lent + 1024))
+		{
+			free(el);
+			el = NULL;
 			return 0;
+		}
 	if (st->used > 0)
 		memmove(st->data + lent, st->data, st->used);
 	memcpy(st->data + lenel + 1, bytes, nbytes);
 	memcpy(st->data + 1, el, lenel);
 	st->data[0] = 0x03;
 	st->used += lent;
+	free(el);
+	el = NULL;
 	return 1;
 }
 
@@ -505,11 +535,17 @@ int stWriteStartSequence(Stack st)
 
 	if ((1 + lenel + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lenel + 1024))
+		{
+			free(el);
+			el = NULL;
 			return 0;
+		}
 	memmove(st->data + lenel + 1, st->data, st->used);
 	memcpy(st->data + 1, el, lenel);
 	st->data[0] = 0x30;
 	st->used += lenel + 1;
+	free(el);
+	el = NULL;
 	return 1;
 }
 
@@ -525,11 +561,17 @@ int stWriteStartOctetString(Stack st)
 
 	if ((1 + lenel + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lenel + 1024))
+		{
+			free(el);
+			el = NULL;
 			return 0;
+		}
 	memmove(st->data + lenel + 1, st->data, st->used);
 	memcpy(st->data + 1, el, lenel);
 	st->data[0] = 0x04;
 	st->used += lenel + 1;
+	free(el);
+	el = NULL;
 	return 1;
 }
 
@@ -545,11 +587,17 @@ int stWriteStartBitString(Stack st)
 
 	if ((1 + lenel + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lenel + 1024))
+		{
+			free(el);
+			el = NULL;
 			return 0;
+		}
 	memmove(st->data + lenel + 1, st->data, st->used);
 	memcpy(st->data + 1, el, lenel);
 	st->data[0] = 0x03;
 	st->used += lenel + 1;
+	free(el);
+	el = NULL;
 	return 1;
 }
 

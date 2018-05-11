@@ -108,7 +108,47 @@ BD privateDecryptOAEPRSA(PrivateRSAKey rsa, BD c)
 
  final:
 	freeBD(p);
-	if (EM != NULL)
-		free(EM);
+	freeString(EM);
+	return m;
+}
+
+BD publicDecryptOAEPRSA(PublicRSAKey rsa, BD c)
+{
+	BD p, m;
+	unsigned char *dg, *EM;
+	size_t size, sizeEM, used, nbytes;
+
+	p = m = NULL;
+	dg = EM = NULL;
+	if ((p = publicEncryptRSA(rsa, c)) == NULL)
+		goto final;
+
+	size = spBytesInBD(rsa->n) - 2 * hLen - 3;
+	sizeEM = spBytesInBD(rsa->n) - 1;
+	if ((EM =
+	     (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
+		goto final;
+
+	dg = (unsigned char *)(p->digits);
+	memcpy(EM, dg, sizeEM);
+
+	if (oaep_decode(EM, sizeEM, LABEL_CLIENT) < 0)
+		goto final;
+
+	nbytes = size;
+	dg = EM + sizeEM - 1;
+	while (*dg-- == 0x00)
+		nbytes--;
+	used = (nbytes + BYTES_PER_DIGIT - 1) / BYTES_PER_DIGIT;
+	if ((m = spInitWithAllocBD(used)) == NULL)
+		goto final;
+
+	dg = (unsigned char *)(m->digits);
+	memcpy(dg, EM + (sizeEM - size), nbytes);
+	m->used = used;
+
+ final:
+	freeBD(p);
+	freeString(EM);
 	return m;
 }

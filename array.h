@@ -27,7 +27,7 @@
 *	      See https://www.gnu.org/licenses/
 ***************************************************************************************/
 #ifndef H_ARRAY_H
-#define H_ARRAY_H
+#define H_ARRAY_H 1
 
 #include <string.h>
 #include <stdlib.h>

@@ -45,45 +45,6 @@ static const char epubk[] = "-----END PUBLIC KEY-----";
      goto final;         \
   }
 
-static unsigned char *clear_rsa_private_comments(const unsigned char *string)
-{
-	unsigned char *begin, *end;
-	if ((begin = (unsigned char *)strstr((char *)string, brpk)) != NULL)
-	  {
-		  begin += strlen(brpk);
-		  if (*begin == '\n')
-			  begin++;
-		  if ((end =
-		       (unsigned char *)strstr((char *)begin, erpk)) == NULL)
-			  return NULL;
-		  *end = '\0';
-		  return begin;
-	  }
-	if ((begin = (unsigned char *)strstr((char *)string, bpk)) == NULL)
-		return NULL;
-	begin += strlen(bpk);
-	if (*begin == '\n')
-		begin++;
-	if ((end = (unsigned char *)strstr((char *)begin, epk)) == NULL)
-		return NULL;
-	*end = '\0';
-	return begin;
-}
-
-static unsigned char *clear_rsa_public_comments(const unsigned char *string)
-{
-	unsigned char *begin, *end;
-	if ((begin = (unsigned char *)strstr((char *)string, bpubk)) == NULL)
-		return NULL;
-	begin += strlen(bpubk);
-	if (*begin == '\n')
-		begin++;
-	if ((end = (unsigned char *)strstr((char *)begin, epubk)) == NULL)
-		return NULL;
-	*end = '\0';
-	return begin;
-}
-
 static unsigned char *clear_rsa_private_info(const unsigned char *string,
 					     unsigned char *salt)
 {
@@ -371,7 +332,7 @@ PrivateRSAKey bdReadPrivateRSAKeyFromFile(const char *filename)
 	   Clear begin and end comments
 	 */
 
-	if ((begin = clear_rsa_private_comments(str)) == NULL)
+	if ((begin = clearCcommentsInText(str,bpk,epk)) == NULL)
 		goto final;
 	len = strlen((char *)begin);
 
@@ -471,7 +432,7 @@ PublicRSAKey bdReadPublicRSAKeyFromFile(const char *filename)
 	   Clear begin and end comments
 	 */
 
-	if ((begin = clear_rsa_public_comments(str)) == NULL)
+	if ((begin = clearCcommentsInText(str,bpubk,epubk)) == NULL)
 		goto errorREAD;
 	len = strlen((char *)begin);
 
@@ -611,3 +572,49 @@ uint8_t bdWritePublicRSAKeyToFile(const char *filename, PublicRSAKey rsa)
 	freeStack(st);
 	return r;
 }
+
+int generatePairRSAKeys(int bits, char *filename, int aes)
+{
+	PrivateRSAKey rsa;
+	int ret;
+	char *p;
+
+	rsa = NULL;
+	p = NULL;
+	ret = 0;
+
+	if ((rsa = genRSAPrivateKey(bits)) == NULL)
+		goto final;
+
+	make_vector(p, strlen(filename) + 5);
+	sprintf(p, "%s.pub",filename);
+	if (!bdWritePublicRSAKeyToFile(p, rsa->pub))
+		goto final;
+
+	sprintf(p, "%s.key",filename);
+
+	if (aes)
+	{
+		if (!bdWriteEncryptedPrivateRSAKeyToFile(p, rsa))
+		{
+			unlink("mce.pub");
+			goto final;
+		}
+		ret = 1;
+		goto final;
+	}
+
+	if (!bdWritePrivateRSAKeyToFile(p, rsa))
+	{
+		unlink("mce.pub");
+		goto final;
+	}
+
+	ret = 1;
+
+final:
+	freePrivateRSAKey(rsa);
+	free_vector(p);
+	return ret;
+}
+

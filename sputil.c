@@ -1,27 +1,27 @@
 /**************************************************************************************
-* Filename:   sputil.c
-* Author:     Rafel Amer (rafel.amer AT upc.edu)
-* Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
-*             need cryptographically secure implementation
-*	    
-* License:    This library  is free software; you can redistribute it and/or
-*             modify it under the terms of either:
-*
-*             1 the GNU Lesser General Public License as published by the Free
-*               Software Foundation; either version 3 of the License, or (at your
-*               option) any later version.
-*
-*             or
-*
-*             2 the GNU General Public License as published by the Free Software
-*               Foundation; either version 2 of the License, or (at your option)
-*               any later version.
-*
-*	      See https://www.gnu.org/licenses/
-***************************************************************************************/
+ * Filename:   sputil.c
+ * Author:     Rafel Amer (rafel.amer AT upc.edu)
+ * Copyright:  Rafel Amer 2018
+ * Disclaimer: This code is presented "as is" and it has been written to 
+ *             implement the RSA encryption and decryption algorithm for 
+ *             educational purposes and should not be used in contexts that 
+ *             need cryptographically secure implementation
+ *	    
+ * License:    This library  is free software; you can redistribute it and/or
+ *             modify it under the terms of either:
+ *
+ *             1 the GNU Lesser General Public License as published by the Free
+ *               Software Foundation; either version 3 of the License, or (at your
+ *               option) any later version.
+ *
+ *             or
+ *
+ *             2 the GNU General Public License as published by the Free Software
+ *               Foundation; either version 2 of the License, or (at your option)
+ *               any later version.
+ *
+ *	      See https://www.gnu.org/licenses/
+ ***************************************************************************************/
 #include <mcersa.h>
 #include <array.h>
 #include <unistd.h>
@@ -99,11 +99,14 @@ void spAugmentInSizeDB(BD n, size_t ndigits)
 void spFreeBD(BD * n)
 {
 	if (*n != NULL)
-	  {
-		  if ((*n)->digits != NULL)
-			  free_vector((*n)->digits);
-		  free(*n);
-	  }
+	{
+		if ((*n)->digits != NULL)
+		{
+			memset((void *)((*n)->digits),0,(*n)->used * BITS_PER_DIGIT);
+			free_vector((*n)->digits);
+		}
+		free(*n);
+	}
 	*n = NULL;
 }
 
@@ -134,10 +137,10 @@ size_t spSizeOfBD(BD n)
 {
 	size_t k = n->used;
 	while (k--)
-	  {
-		  if (n->digits[k] != 0)
-			  return (++k);
-	  }
+	{
+		if (n->digits[k] != 0)
+			return (++k);
+	}
 	return 0;
 }
 
@@ -153,14 +156,14 @@ size_t spBitsInBD(BD n)
 	ndigits = spSizeOfBD(n);
 	if (ndigits == 0)
 		return 0;
-
+	
 	for (i = 0, mask = HIBITMASK; mask > 0; mask >>= 1, i++)
-	  {
-		  if (n->digits[ndigits - 1] & mask)
-			  break;
-	  }
+	{
+		if (n->digits[ndigits - 1] & mask)
+			break;
+	}
 	bits = ndigits * BITS_PER_DIGIT - i;
-
+	
 	return bits;
 }
 
@@ -178,7 +181,7 @@ size_t spLowerBitsZeroInBD(BD n)
   the exponent of the greatest power of 2 that divides n
 
   If n == 0, return 0
- */
+*/
 {
 	size_t i, bits;
 	digit m, mask;
@@ -217,7 +220,7 @@ unsigned char spGetByte(BD n, size_t byte)
 /*
   Returns the byte at position byte in n->digits as a
   unsigned char
- */
+*/
 {
 	unsigned char *aux;
 	aux = (unsigned char *)(n->digits);
@@ -227,9 +230,9 @@ unsigned char spGetByte(BD n, size_t byte)
 int spCompareAbsoluteValues(BD n1, BD n2)
 /*  Returns:
     1 if |n1| > |n2|
-   -1 if |n1| < |n2|
+		-1 if |n1| < |n2|
     0 if |n1| == |n2|
- */
+*/
 {
 	size_t t1, t2, i;
 	t1 = spSizeOfBD(n1);
@@ -241,15 +244,15 @@ int spCompareAbsoluteValues(BD n1, BD n2)
 
 	/* t1 == t2 */
 	for (i = 0; i < t1; i++)
-	  {
-		  digit x1, x2;
-		  x1 = n1->digits[t1 - i - 1];
-		  x2 = n2->digits[t1 - i - 1];
-		  if (x1 > x2)
-			  return 1;
-		  if (x1 < x2)
-			  return -1;
-	  }
+	{
+		digit x1, x2;
+		x1 = n1->digits[t1 - i - 1];
+		x2 = n2->digits[t1 - i - 1];
+		if (x1 > x2)
+			return 1;
+		if (x1 < x2)
+			return -1;
+	}
 	return 0;
 }
 
@@ -281,7 +284,7 @@ void spAddDigitToBD(BD n, digit m, size_t pos)
 /*
   Computes n = n + m*B^pos
   If necessary expands n
- */
+*/
 {
 	digit t = 0;
 	size_t i = pos;
@@ -294,53 +297,53 @@ void spAddDigitToBD(BD n, digit m, size_t pos)
 
 	t = spAddTo(n->digits + i, m, t);
 	while (t > 0)
-	  {
-		  i++;
-		  if (i > n->alloc)
-			  spAugmentDB(n);
-		  if (i > n->used)
-			  n->used++;
-		  t = spAddTo(n->digits + i, 0, t);
-	  }
+	{
+		i++;
+		if (i > n->alloc)
+			spAugmentDB(n);
+		if (i > n->used)
+			n->used++;
+		t = spAddTo(n->digits + i, 0, t);
+	}
 }
 
 void spSubtractDigitToBD(BD n, digit m)
 /*
   Computes n = n - m
- */
+*/
 {
 	size_t ndigits;
 	if (m == 0)
 		return;
 	ndigits = spSizeOfBD(n);
 	if (ndigits == 0)
-	  {
-		  n->digits[0] = m;
-		  n->sign = -1;
-		  return;
-	  }
+	{
+		n->digits[0] = m;
+		n->sign = -1;
+		return;
+	}
 	if (ndigits == 1)
-	  {
-		  n->digits[0] -= m;
-		  if (n->digits[0] > MAX_DIGIT - m)
-			  n->sign = -1;
-		  return;
-	  }
+	{
+		n->digits[0] -= m;
+		if (n->digits[0] > MAX_DIGIT - m)
+			n->sign = -1;
+		return;
+	}
 	digit t = 0;
 	size_t i = 0;
 	t = spSubtractTo(n->digits, m, 0);
 	while (t > 0)
-	  {
-		  i++;
-		  t = spSubtractTo(n->digits + i, 0, t);
-	  }
+	{
+		i++;
+		t = spSubtractTo(n->digits + i, 0, t);
+	}
 	n->used = spSizeOfBD(n);
 }
 
 BD spPartOfBD(BD n, size_t begin, size_t length)
 /*
   Return an auxiliary pointer to a part of a BD
- */
+*/
 {
 	if (begin + length > n->used)
 		return NULL;
@@ -387,10 +390,10 @@ void spPrintBinary(digit m, char *text)
 	size_t i;
 	digit mask;
 	for (i = BITS_PER_DIGIT; i > 0; i--)
-	  {
-		  mask = (digit) 1 << (i - 1);
-		  printf("%u", (m & mask) ? 1 : 0);
-	  }
+	{
+		mask = (digit) 1 << (i - 1);
+		printf("%u", (m & mask) ? 1 : 0);
+	}
 	printf("\n");
 }
 
@@ -400,10 +403,10 @@ void spPrintByte(unsigned char b, char *text)
 	size_t i;
 	unsigned char mask;
 	for (i = 8; i > 0; i--)
-	  {
-		  mask = (unsigned char)1 << (i - 1);
-		  printf("%u", (b & mask) ? 1 : 0);
-	  }
+	{
+		mask = (unsigned char)1 << (i - 1);
+		printf("%u", (b & mask) ? 1 : 0);
+	}
 	printf("\n");
 }
 
@@ -442,19 +445,19 @@ char *getPassword(const char *text)
 	tcsetattr(STDIN_FILENO, TCSANOW, &newt);
 
 	while (((c = getchar()) != '\n') && (c != EOF))
-	  {
-		  if (str_size == alloc_size)
-		    {
-			    alloc_size += ALLOCSIZE;
-			    expand_vector(password, alloc_size);
-		    }
-		  password[str_size++] = c;
-	  }
+	{
+		if (str_size == alloc_size)
+		{
+			alloc_size += ALLOCSIZE;
+			expand_vector(password, alloc_size);
+		}
+		password[str_size++] = c;
+	}
 	if (str_size == alloc_size)
-	  {
-		  alloc_size += ALLOCSIZE;
-		  expand_vector(password, 8);
-	  }
+	{
+		alloc_size += ALLOCSIZE;
+		expand_vector(password, 8);
+	}
 	password[str_size] = '\0';
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 	printf("\n");
@@ -477,17 +480,16 @@ char *getAndVerifyPassphrase(unsigned int msize)
 	freeString(p2);
 	return p1;
 
- errorVerify:
+errorVerify:
 	freeString(p1);
 	freeString(p2);
 	fprintf(stderr, "The two passphrases does not coincide. Try again\n");
 	return NULL;
 
- errorTooShort:
+errorTooShort:
 	freeString(p1);
 	freeString(p2);
-	fprintf(stderr,
-		"Passphrase too short. It must have at least 8 characters\n");
+	fprintf(stderr,"Passphrase too short. It must have at least %u characters\n",msize);
 	return NULL;
 }
 
@@ -499,3 +501,21 @@ void textToSHA256(char *text, unsigned char *sha)
 	sha256_update(&ctx, (unsigned char *)text, strlen(text));
 	sha256_final(&ctx, sha);
 }
+
+unsigned char *clearCcommentsInText(unsigned char *string,const unsigned char *begin,const unsigned char *end)
+{
+	unsigned char *p, *q;
+
+	p = q = NULL;
+	if ((p = (unsigned char *)strstr((char *)string,begin)) != NULL) {
+		p += strlen((char *)begin);
+		while (*p == '\n')
+			p++;
+		if ((q = (unsigned char *)strstr((char *)p,end)) == NULL)
+			return NULL;
+		*q = '\0';
+		return p;
+	}
+	return NULL;
+}
+

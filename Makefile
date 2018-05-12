@@ -5,7 +5,7 @@ addition.o subtraction.o multiplication.o division.o random.o gcd.o \
 modular.o primes.o rsa.o base64.o rsafiles.o encrypt.o decrypt.o \
 der.o aes.o des.o md5.o sha1.o arcfour.o blowfish.o md2.o rot-13.o \
 sha2.o tiger.o sboxes.o oaep.o spcrypt.o pkcs5_pbkdf2.o cryptaes.o \
-signature.o
+signature.o cryptfiles.o
 
 OS = $(shell sh -c 'uname -s 2>/dev/null || echo not')
 

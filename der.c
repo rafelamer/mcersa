@@ -1,27 +1,27 @@
 /**************************************************************************************
-* Filename:   der.c
-* Author:     Rafel Amer (rafel.amer AT upc.edu)
-* Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
-*             need cryptographically secure implementation
-*	    
-* License:    This library  is free software; you can redistribute it and/or
-*             modify it under the terms of either:
-*
-*             1 the GNU Lesser General Public License as published by the Free
-*               Software Foundation; either version 3 of the License, or (at your
-*               option) any later version.
-*
-*             or
-*
-*             2 the GNU General Public License as published by the Free Software
-*               Foundation; either version 2 of the License, or (at your option)
-*               any later version.
-*
-*	      See https://www.gnu.org/licenses/
-***************************************************************************************/
+ * Filename:   der.c
+ * Author:     Rafel Amer (rafel.amer AT upc.edu)
+ * Copyright:  Rafel Amer 2018
+ * Disclaimer: This code is presented "as is" and it has been written to 
+ *             implement the RSA encryption and decryption algorithm for 
+ *             educational purposes and should not be used in contexts that 
+ *             need cryptographically secure implementation
+ *	    
+ * License:    This library  is free software; you can redistribute it and/or
+ *             modify it under the terms of either:
+ *
+ *             1 the GNU Lesser General Public License as published by the Free
+ *               Software Foundation; either version 3 of the License, or (at your
+ *               option) any later version.
+ *
+ *             or
+ *
+ *             2 the GNU General Public License as published by the Free Software
+ *               Foundation; either version 2 of the License, or (at your option)
+ *               any later version.
+ *
+ *	      See https://www.gnu.org/licenses/
+ ***************************************************************************************/
 #include <mcersa.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -29,7 +29,7 @@
 #include <string.h>
 
 static unsigned char rsaEncryption[] =
-    { 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48,
+{ 0x30, 0x0D, 0x06, 0x09, 0x2A, 0x86, 0x48,
 	0x86, 0xF7, 0x0D, 0x01, 0x01, 0x01, 0x05, 0x00
 };
 
@@ -38,45 +38,45 @@ unsigned char *encode_length(size_t value, size_t * len)
 	unsigned char *r, *aux;
 	size_t temp;
 	r = NULL;
-
+	
 	if (value < 128)
-	  {
-		  *len = 1;
+	{
+		*len = 1;
 	} else
-	  {
-		  temp = value;
-		  *len = 1;
-		  while (temp > 0)
-		    {
-			    *len += 1;
-			    temp /= 256;
-		    }
-	  }
+	{
+		temp = value;
+		*len = 1;
+		while (temp > 0)
+		{
+			*len += 1;
+			temp /= 256;
+		}
+	}
 	if (*len > 126)
 		goto errorLength;
-
+	
 	if ((r = (unsigned char *)malloc(*len * sizeof(unsigned char))) == NULL)
 		goto errorLength;
-
+	
 	if (*len == 1)
-	  {
-		  *r = (unsigned char)value;
-		  return r;
-	  }
+	{
+		*r = (unsigned char)value;
+		return r;
+	}
 	/*
-	   We set the first bit to 1
-	   x80 = 10000000
-	 */
+		We set the first bit to 1
+		x80 = 10000000
+	*/
 	*r = (*len - 1) | 0x80;
 	aux = r + *len - 1;
 	while (aux > r)
-	  {
-		  *aux-- = value % 256;
-		  value /= 256;
-	  }
+	{
+		*aux-- = value % 256;
+		value /= 256;
+	}
 	return r;
-
- errorLength:
+	
+errorLength:
 	*len = 0;
 	return NULL;
 }
@@ -84,7 +84,7 @@ unsigned char *encode_length(size_t value, size_t * len)
 Stack stInitStack()
 {
 	Stack st;
-
+	
 	st = NULL;
 	if ((st = (Stack) malloc(sizeof(data_stack))) == NULL)
 		return NULL;
@@ -98,7 +98,7 @@ Stack stInitStack()
 Stack stInitStackWithSize(size_t size)
 {
 	Stack st;
-
+	
 	st = NULL;
 	if ((st = (Stack) malloc(sizeof(data_stack))) == NULL)
 		goto error;
@@ -109,7 +109,7 @@ Stack stInitStackWithSize(size_t size)
 	st->read = st->data;
 	return st;
 
- error:
+error:
 	if (st != NULL)
 		freeStack(st);
 	return NULL;
@@ -131,7 +131,10 @@ void stFreeStack(Stack * st)
 	if (*st == NULL)
 		return;
 	if ((*st)->data != NULL)
+	{
+		memset((void *)((*st)->data),0,(*st)->used);
 		free((*st)->data);
+	}
 	free(*st);
 	*st = NULL;
 }
@@ -141,16 +144,16 @@ int stExpandStackInSize(Stack st, size_t size)
 	if (st == NULL)
 		return 0;
 	if ((st->data == NULL) || (st->alloc == 0))
-	  {
-		  if ((st->data =
-		       (unsigned char *)malloc(size * sizeof(unsigned char))) ==
-		      NULL)
-			  return 0;
-	  }
+	{
+		if ((st->data =
+				 (unsigned char *)malloc(size * sizeof(unsigned char))) ==
+				NULL)
+			return 0;
+	}
 	st->alloc += size;
 	if ((st->data =
 	     (unsigned char *)realloc(st->data,
-				      st->alloc * sizeof(unsigned char))) ==
+																st->alloc * sizeof(unsigned char))) ==
 	    NULL)
 		return 0;
 	memset(st->data + st->used, 0, st->alloc - st->used);
@@ -158,7 +161,7 @@ int stExpandStackInSize(Stack st, size_t size)
 }
 
 void stSetDataInStack(Stack st, unsigned char *data, size_t nbytes,
-		      size_t alloc)
+											size_t alloc)
 {
 	freeString(st->data);
 	st->data = data;
@@ -179,19 +182,19 @@ size_t stReadLength(Stack st, int *error)
 	*error = 0;
 	b = *(st->read)++;
 	if (b & 0x80)
-	  {
-		  n = 0;
-		  /*
-		     We set the first bit to 0
-		     0x7F = 01111111
-		   */
-		  b &= 0x7F;
-		  for (i = 0; i < b; i++)
-			  n = 256 * n + (size_t) (*(st->read)++);
-		  if (n == 0)
-			  *error = 1;
-		  return n;
-	  }
+	{
+		n = 0;
+		/*
+			We set the first bit to 0
+			0x7F = 01111111
+		*/
+		b &= 0x7F;
+		for (i = 0; i < b; i++)
+			n = 256 * n + (size_t) (*(st->read)++);
+		if (n == 0)
+			*error = 1;
+		return n;
+	}
 	if ((b & 0x7F) == 0)
 		*error = 1;
 	return (size_t) (b & 0x7F);
@@ -237,10 +240,10 @@ unsigned char *stReadOctetString(Stack st, size_t * length, int *error)
 		return 0;
 
 	if ((str = (unsigned char *)malloc(*length * sizeof(unsigned char))) == NULL)
-	  {
-		  *error = 1;
-		  return NULL;
-	  }
+	{
+		*error = 1;
+		return NULL;
+	}
 	memcpy(str, st->read, *length);
 	(st->read) += *length;
 	*error = 0;
@@ -264,10 +267,10 @@ unsigned char *stReadBitString(Stack st, size_t * length, int *error)
 
 	if ((str =
 	     (unsigned char *)malloc(*length * sizeof(unsigned char))) == NULL)
-	  {
-		  *error = 1;
-		  return NULL;
-	  }
+	{
+		*error = 1;
+		return NULL;
+	}
 	memcpy(str, st->read, *length);
 	(st->read) += *length;
 	*error = 0;
@@ -420,32 +423,32 @@ int stWriteInteger(Stack st, unsigned long long integer)
 	unsigned long long r;
 	unsigned char data[BYTES_PER_DIGIT + 1];
 	/*
-	   Number of significative bytes in integer and how many bytes
-	   we need to alloc
-	 */
+		Number of significative bytes in integer and how many bytes
+		we need to alloc
+	*/
 	r = integer;
 	memset(data, 0, BYTES_PER_DIGIT + 1);
 	m = BYTES_PER_DIGIT;
 	while (r > 0)
-	  {
-		  data[m--] = r % 256;
-		  r /= 256;
-	  }
+	{
+		data[m--] = r % 256;
+		r /= 256;
+	}
 	if ((m != BYTES_PER_DIGIT) && ((data[m + 1] & 0x80) == 0))
 		m++;
 
 	lent = BYTES_PER_DIGIT - m + 1;
 	/*
-	   Encode the length alloc
-	 */
+		Encode the length alloc
+	*/
 	size_t lenel;
 	unsigned char *el;
 	if ((el = encode_length(lent, &lenel)) == NULL)
 		return 0;
 
 	/*
-	   Encode the integer
-	 */
+		Encode the integer
+	*/
 	lent += 1 + lenel;
 	if ((lent + st->used) > st->alloc)
 		if (!stExpandStackInSize(st, lent + 1024))
@@ -627,10 +630,10 @@ int stWriteBD(Stack st, BD n)
 		tbytes = 1;
 
 	/*
-	   The eigth bit of the last byte can't be one
-	   The last byte i n->digits is stored as the first byte
-	   in the encoding
-	 */
+		The eigth bit of the last byte can't be one
+		The last byte i n->digits is stored as the first byte
+		in the encoding
+	*/
 
 	if (spGetByte(n, bytes - 1) & 0x80)
 		tbytes += 1;
@@ -648,10 +651,10 @@ int stWriteBD(Stack st, BD n)
 	memcpy(st->data + 1, el, lenel);
 
 	/*
-	   p points to the begin of bytes in n
-	   last points to the most significative byte of n
-	   q points to the moved data minus one
-	 */
+		p points to the begin of bytes in n
+		last points to the most significative byte of n
+		q points to the moved data minus one
+	*/
 	p = (unsigned char *)(n->digits);
 	last = p + bytes - 1;
 	q = st->data + lenel + tbytes;
@@ -662,7 +665,7 @@ int stWriteBD(Stack st, BD n)
 	st->used += 1 + lenel + tbytes;
 	ret = 1;
 
- final:
+final:
 	if (el != NULL)
 		free(el);
 	return ret;

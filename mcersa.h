@@ -294,16 +294,17 @@ unsigned char *zlib_uncompress_data(unsigned char *data, size_t insize,
   Base 64 encoding and decoding
  */
 unsigned char *b64_encode(const unsigned char *src, size_t len,
-			  size_t * out_len);
+													size_t * out_len);
 unsigned char *b64_decode(const unsigned char *src, size_t len,
-			  size_t * out_len);
-
+													size_t * out_len);
 
 /*
   Text to SHA256
  */
 void textToSHA256(char *text, unsigned char *sha);
-
+unsigned char *clearCcommentsInText(unsigned char *string,
+																		const unsigned char *begin,
+																		const unsigned char *end);
 /*
   RSA files
  */
@@ -312,12 +313,13 @@ PrivateRSAKey bdReadPrivateRSAKeyFromFile(const char *filename);
 uint8_t bdWritePrivateRSAKeyToFile(const char *filename, PrivateRSAKey rsa);
 PrivateRSAKey bdReadEncryptedPrivateRSAKeyFromFile(const char *filename);
 uint8_t bdWriteEncryptedPrivateRSAKeyToFile(const char *filename,
-					    PrivateRSAKey rsa);
+																						PrivateRSAKey rsa);
 PublicRSAKey bdReadPublicRSAKeyFromFile(const char *filename);
 uint8_t bdWritePublicRSAKeyToFile(const char *filename, PublicRSAKey rsa);
+int generatePairRSAKeys(int bits, char *filename, int aes);
 
 /*
-  Encrypt and decrypt
+  Encrypt and decrypt Big Digits
 */
 BD publicEncryptRSA(PublicRSAKey rsa, BD m);
 BD privateDecryptRSA(PrivateRSAKey rsa, BD c);
@@ -351,11 +353,22 @@ int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
         uint8_t mode);
 int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
         uint8_t mode);
+
+/*
+	Encrypt and decrypt files
+ */
+int encryptFileWithAES(char *infile, char **outfile, int ascii);
+int decryptFileWithAES(char *infile, char *outfile);
+int encryptFileWithRSA(char *infile, char **outfile, char *keyfile, int ascii);
+int decryptFileWithRSA(char *infile, char *outfile, char *keyfile);
+
 /*
   Signatures
 */
 int signStackRSA(Stack st,PrivateRSAKey rsa,char *filename,uint8_t mode);
 int verifyAndExtractStackRSA(Stack st,PublicRSAKey rsa,uint8_t mode);
+int signFileWithRSA(char *infile, char **outfile, char *keyfile, int ascii);
+int verifyAndExtractSignedFileWithRSA(char *infile,char *keyfile);
 
 /*
   Password-Based Key Derivation Function 2

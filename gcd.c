@@ -29,30 +29,30 @@ BD bdGCDOfBD(BD n1, BD n2)
 /*
   The algorithm uses the absolute values of n1 and n2
   Returns r = gcd(n1,n2)
- */
+*/
 {
 	BD u, v;
 	size_t lu, lv, l;
 	/*
-	   If n1 == 0 or n2 == 0, return the largest
-	 */
+		If n1 == 0 or n2 == 0, return the largest
+	*/
 	if (spIsZeroBD(n1))
-	  {
-		  if ((u = spCopyBD(n2)) == NULL)
-			  return NULL;
-		  u->sign = 1;
-		  return u;
-	  }
+	{
+		if ((u = spCopyBD(n2)) == NULL)
+			return NULL;
+		u->sign = 1;
+		return u;
+	}
 	if (spIsZeroBD(n2))
-	  {
-		  if ((u = spCopyBD(n1)) == NULL)
-			  return NULL;
-		  u->sign = 1;
-		  return u;
-	  }
+	{
+		if ((u = spCopyBD(n1)) == NULL)
+			return NULL;
+		u->sign = 1;
+		return u;
+	}
 	/*
-	   Make copies of n1 and n2
-	 */
+		Make copies of n1 and n2
+	*/
 	if ((u = spCopyBD(n1)) == NULL)
 		goto ERRORCOPY;
 	if ((v = spCopyBD(n2)) == NULL)
@@ -60,9 +60,9 @@ BD bdGCDOfBD(BD n1, BD n2)
 	u->sign = v->sign = 1;
 
 	/*
-	   Find the common power of two for u and v
-	   and divide u and v by such power
-	 */
+		Find the common power of two for u and v
+		and divide u and v by such power
+	*/
 	lu = spLowerBitsZeroInBD(u);
 	lv = spLowerBitsZeroInBD(v);
 	l = min(lu, lv);
@@ -70,30 +70,30 @@ BD bdGCDOfBD(BD n1, BD n2)
 	spShiftToRightNumberOfBits(v, l);
 
 	/*
-	   Make sure that u is greater than v
-	 */
+		Make sure that u is greater than v
+	*/
 	if (spCompareAbsoluteValues(u, v) == -1)
-	  {
-		  BD t;
-		  t = u;
-		  u = v;
-		  v = t;
-	  }
+	{
+		BD t;
+		t = u;
+		u = v;
+		v = t;
+	}
 
 	while (!spIsZeroBD(v))
-	  {
-		  BD r, q;
-		  r = bdDivideSimpleBD(u, v, &q);
-		  freeBD(q);
-		  freeBD(u);
-		  u = v;
-		  v = r;
-	  }
+	{
+		BD r, q;
+		r = bdDivideSimpleBD(u, v, &q);
+		freeBD(q);
+		freeBD(u);
+		u = v;
+		v = r;
+	}
 	freeBD(v);
 	spMultiplyByPowerOfTwo(u, l);
 	return u;
 
- ERRORCOPY:
+ERRORCOPY:
 	freeBD(u);
 	freeBD(v);
 	return NULL;
@@ -103,7 +103,7 @@ BD bdLCMOfBD(BD n1, BD n2)
 /*
   The algorithm uses the absolute values of n1 and n2
   Returns r = lcm(n1,n2)
- */
+*/
 {
 	BD t, r, q;
 	t = r = q = NULL;
@@ -120,7 +120,7 @@ BD bdLCMOfBD(BD n1, BD n2)
 	freeBD(q);
 	return t;
 
- errorLCM:
+errorLCM:
 	freeBD(t);
 	freeBD(r);
 	freeBD(q);
@@ -133,7 +133,7 @@ BD bdExtendedGCDOfBD(BD n1, BD n2, BD * x, BD * y)
 
   Returns r = gcd(n1,n2);
   and finds x and y such that n1 * x + n2 * y = r
- */
+*/
 {
 	BD u, v, lx, ly;
 	size_t lu, lv, l;
@@ -156,13 +156,13 @@ BD bdExtendedGCDOfBD(BD n1, BD n2, BD * x, BD * y)
 
 	exch = 0;
 	if (spCompareAbsoluteValues(u, v) == -1)
-	  {
-		  BD t;
-		  t = u;
-		  u = v;
-		  v = t;
-		  exch = 1;
-	  }
+	{
+		BD t;
+		t = u;
+		u = v;
+		v = t;
+		exch = 1;
+	}
 	if ((*x = spInitWithOneBD()) == NULL)
 		goto ERRORCOPYINIT;
 	if ((*y = spInitBD()) == NULL)
@@ -173,46 +173,46 @@ BD bdExtendedGCDOfBD(BD n1, BD n2, BD * x, BD * y)
 		goto ERRORCOPYINIT;
 
 	while (!spIsZeroBD(v))
-	  {
-		  BD r, q, t1, t2;
-		  r = bdDivideSimpleBD(u, v, &q);
-		  freeBD(u);
-		  u = v;
-		  v = r;
-		  /*
-		     Extended part for *x and lx
-		     (lx, x) = ((x - (q * lx)),lx)
-		   */
-		  t1 = bdMultiplyBD(q, lx);
-		  t2 = bdSubtractBD(*x, t1);
-		  freeBD(t1);
-		  *x = lx;
-		  lx = t2;
-		  /*
-		     Extended part for *y and ly
-		   */
-		  t1 = bdMultiplyBD(q, ly);
-		  t2 = bdSubtractBD(*y, t1);
-		  freeBD(t1);
-		  *y = ly;
-		  ly = t2;
+	{
+		BD r, q, t1, t2;
+		r = bdDivideSimpleBD(u, v, &q);
+		freeBD(u);
+		u = v;
+		v = r;
+		/*
+			Extended part for *x and lx
+			(lx, x) = ((x - (q * lx)),lx)
+		*/
+		t1 = bdMultiplyBD(q, lx);
+		t2 = bdSubtractBD(*x, t1);
+		freeBD(t1);
+		*x = lx;
+		lx = t2;
+		/*
+			Extended part for *y and ly
+		*/
+		t1 = bdMultiplyBD(q, ly);
+		t2 = bdSubtractBD(*y, t1);
+		freeBD(t1);
+		*y = ly;
+		ly = t2;
 
-		  freeBD(q);
-	  }
+		freeBD(q);
+	}
 	freeBD(lx);
 	freeBD(ly);
 	freeBD(v);
 	spMultiplyByPowerOfTwo(u, l);
 	if (exch == 1)
-	  {
-		  BD t;
-		  t = *y;
-		  *y = *x;
-		  *x = t;
-	  }
+	{
+		BD t;
+		t = *y;
+		*y = *x;
+		*x = t;
+	}
 	return u;
 
- ERRORCOPYINIT:
+ERRORCOPYINIT:
 	freeBD(u);
 	u = NULL;
 	freeBD(v);

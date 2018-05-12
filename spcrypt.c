@@ -39,72 +39,72 @@
 
 #define ZLIBCHUNK 16384
 
-#define CALL_ZLIB_DEFLATE(x)  unsigned char out[ZLIBCHUNK];                                      \
-   st.avail_in = (x) * sizeof(unsigned char);                                                    \
-   st.next_in = (Bytef *)p;                                                                      \
-   insize -= (x);                                                                                \
-   flush = (insize == 0) ? Z_FINISH : Z_NO_FLUSH;                                                \
-   do				                                                                 \
-      {                                                                                          \
-	 size_t have;                                                                            \
-	 st.avail_out = ZLIBCHUNK;                                                               \
-	 st.next_out = (Bytef *)out;						                 \
-	 ret = deflate(&st,flush);                                                               \
-         if ((ret != Z_OK) && (ret != Z_STREAM_END))			              		 \
-            {                                                                                    \
-	       deflateEnd(&st);                                                                  \
-	       free(str);                                                                        \
-               *alloc = 0;								         \
-	       *outsize = 0;                                                                     \
-	       return NULL;                                                                      \
-            }                                                                                    \
-	 have = ZLIBCHUNK - st.avail_out;                                                        \
-	 if ((*alloc - *outsize) < have)                                                         \
-            {                                                                                    \
-               *alloc += ZLIBCHUNK;                                                              \
-               if ((str = (unsigned char *)realloc(str,*alloc * sizeof(unsigned char))) == NULL) \
-	          return NULL;                                                                   \
-            }                                                                                    \
-         memcpy(str + *outsize,out,have);                                                        \
-	 *outsize += have;                                                                       \
-      } while (st.avail_out == 0);                                                               \
-   p += (x);
+#define CALL_ZLIB_DEFLATE(x)  unsigned char out[ZLIBCHUNK];							\
+	st.avail_in = (x) * sizeof(unsigned char);														\
+	st.next_in = (Bytef *)p;																							\
+	insize -= (x);																												\
+	flush = (insize == 0) ? Z_FINISH : Z_NO_FLUSH;												\
+	do																																		\
+	{																																			\
+		size_t have;																												\
+		st.avail_out = ZLIBCHUNK;																						\
+		st.next_out = (Bytef *)out;																					\
+		ret = deflate(&st,flush);																						\
+		if ((ret != Z_OK) && (ret != Z_STREAM_END))													\
+		{																																		\
+			deflateEnd(&st);																									\
+			free(str);																												\
+			*alloc = 0;																												\
+			*outsize = 0;																											\
+			return NULL;																											\
+		}																																		\
+		have = ZLIBCHUNK - st.avail_out;																		\
+		if ((*alloc - *outsize) < have)																			\
+		{																																		\
+			*alloc += ZLIBCHUNK;																							\
+			if ((str = (unsigned char *)realloc(str,*alloc * sizeof(unsigned char))) == NULL) \
+				return NULL;																										\
+		}																																		\
+		memcpy(str + *outsize,out,have);																		\
+		*outsize += have;																										\
+	} while (st.avail_out == 0);																					\
+	p += (x);
 
-#define CALL_ZLIB_INFLATE(x)  unsigned char out[ZLIBCHUNK];                                      \
-   st.avail_in = (x) * sizeof(unsigned char);                                                    \
-   st.next_in = (Bytef *)p;                                                                      \
-   insize -= (x);								                 \
-   do				                                                                 \
-      {                                                                                          \
-	 size_t have;                                                                            \
-	 st.avail_out = ZLIBCHUNK;                                                               \
-	 st.next_out = (Bytef *)out;						                 \
-	 ret = inflate(&st,Z_NO_FLUSH);                                                          \
-         if ((ret != Z_OK)  && (ret != Z_STREAM_END))	                        		 \
-            {                                                                                    \
-	       inflateEnd(&st);                                                                  \
-	       free(str);                                                                        \
-               *alloc = 0;								         \
-	       *outsize = 0;                                                                     \
-	       return NULL;                                                                      \
-            }                                                                                    \
-	 have = ZLIBCHUNK - st.avail_out;                                                        \
-	 if ((*alloc - *outsize) < have)                                                         \
-            {                                                                                    \
-               *alloc += ZLIBCHUNK;                                                              \
-               if ((str = (unsigned char *)realloc(str,*alloc * sizeof(unsigned char))) == NULL) \
-	          return NULL;                                                                   \
-            }                                                                                    \
-         memcpy(str + *outsize,out,have);                                                        \
-	 *outsize += have;                                                                       \
-      } while (st.avail_out == 0);          		                                	 \
-   p += (x);
+#define CALL_ZLIB_INFLATE(x)  unsigned char out[ZLIBCHUNK];							\
+	st.avail_in = (x) * sizeof(unsigned char);														\
+	st.next_in = (Bytef *)p;																							\
+	insize -= (x);																												\
+	do																																		\
+	{																																			\
+		size_t have;																												\
+		st.avail_out = ZLIBCHUNK;																						\
+		st.next_out = (Bytef *)out;																					\
+		ret = inflate(&st,Z_NO_FLUSH);																			\
+		if ((ret != Z_OK)  && (ret != Z_STREAM_END))												\
+		{																																		\
+			inflateEnd(&st);																									\
+			free(str);																												\
+			*alloc = 0;																												\
+			*outsize = 0;																											\
+			return NULL;																											\
+		}																																		\
+		have = ZLIBCHUNK - st.avail_out;																		\
+		if ((*alloc - *outsize) < have)																			\
+		{																																		\
+			*alloc += ZLIBCHUNK;																							\
+			if ((str = (unsigned char *)realloc(str,*alloc * sizeof(unsigned char))) == NULL) \
+				return NULL;																										\
+		}																																		\
+		memcpy(str + *outsize,out,have);																		\
+		*outsize += have;																										\
+	} while (st.avail_out == 0);																					\
+	p += (x);
 
 /*
   Compress and uncompress with zlib
- */
+*/
 unsigned char *zlib_compress_data(unsigned char *data, size_t insize,
-				  size_t * outsize, size_t * alloc)
+																	size_t * outsize, size_t * alloc)
 {
 	z_stream st;
 	unsigned char *str, *p;
@@ -128,19 +128,19 @@ unsigned char *zlib_compress_data(unsigned char *data, size_t insize,
 
 	p = data;
 	while (insize > ZLIBCHUNK)
-	  {
-		  CALL_ZLIB_DEFLATE(ZLIBCHUNK);
-	  }
+	{
+		CALL_ZLIB_DEFLATE(ZLIBCHUNK);
+	}
 	if (insize > 0)
-	  {
-		  CALL_ZLIB_DEFLATE(insize);
-	  }
+	{
+		CALL_ZLIB_DEFLATE(insize);
+	}
 	deflateEnd(&st);
 	return str;
 }
 
 unsigned char *zlib_uncompress_data(unsigned char *data, size_t insize,
-				    size_t * outsize, size_t * alloc)
+																		size_t * outsize, size_t * alloc)
 {
 	z_stream st;
 	unsigned char *str, *p;
@@ -164,13 +164,13 @@ unsigned char *zlib_uncompress_data(unsigned char *data, size_t insize,
 
 	p = data;
 	while (insize > ZLIBCHUNK)
-	  {
-		  CALL_ZLIB_INFLATE(ZLIBCHUNK);
-	  }
+	{
+		CALL_ZLIB_INFLATE(ZLIBCHUNK);
+	}
 	if (insize > 0)
-	  {
-		  CALL_ZLIB_INFLATE(insize);
-	  }
+	{
+		CALL_ZLIB_INFLATE(insize);
+	}
 	inflateEnd(&st);
 	return str;
 }

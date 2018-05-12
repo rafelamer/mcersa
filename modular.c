@@ -38,13 +38,13 @@ BD bdModularBD(BD n1, BD n2)
 		return NULL;
 	freeBD(q);
 	if (r->sign == -1)
-	  {
-		  q = spCopyBD(n2);
-		  q->sign = 1;
-		  bdSubtractAbsoluteValuesTo(q, r);
-		  freeBD(r);
-		  return q;
-	  }
+	{
+		q = spCopyBD(n2);
+		q->sign = 1;
+		bdSubtractAbsoluteValuesTo(q, r);
+		freeBD(r);
+		return q;
+	}
 	return r;
 }
 
@@ -59,10 +59,10 @@ BD bdMultiplyAndModularBD(BD n1, BD n2, BD n3)
 	if ((r = bdMultiplyBD(n1, n2)) == NULL)
 		return NULL;
 	if ((m = bdModularBD(r, n3)) == NULL)
-	  {
-		  freeBD(r);
-		  return NULL;
-	  }
+	{
+		freeBD(r);
+		return NULL;
+	}
 	freeBD(r);
 	return m;
 }
@@ -70,7 +70,7 @@ BD bdMultiplyAndModularBD(BD n1, BD n2, BD n3)
 uint8_t bdMultiplyAndModularBDBy(BD * n1, BD n2, BD n3)
 /*
   n1 = n1 * n2  mod(n3)
- */
+*/
 {
 	BD m;
 	if ((m = bdMultiplyAndModularBD(*n1, n2, n3)) == NULL)
@@ -83,27 +83,27 @@ uint8_t bdMultiplyAndModularBDBy(BD * n1, BD n2, BD n3)
 uint8_t bdExponentialToPowerOfTwoAndModularBD(BD * n, BD n2, size_t power)
 /*
   n = n ^ (2 ^ power)  mod(n2)
- */
+*/
 {
 	/*
-	   Nothing to do
-	 */
+		Nothing to do
+	*/
 	if (power == 0)
 		return 1;
 	if (spIsZeroBD(*n) || spIsOneBD(*n))
 		return 1;
 	/*
-	   Start squaring
-	 */
+		Start squaring
+	*/
 	size_t i;
 	BD r;
 	for (i = 0; i < power; i++)
-	  {
-		  if ((r = bdMultiplyAndModularBD(*n, *n, n2)) == NULL)
-			  return 0;
-		  freeBD(*n);
-		  *n = r;
-	  }
+	{
+		if ((r = bdMultiplyAndModularBD(*n, *n, n2)) == NULL)
+			return 0;
+		freeBD(*n);
+		*n = r;
+	}
 	return 1;
 }
 
@@ -113,36 +113,36 @@ BD bdInverseModularBD(BD n1, BD n2, int8_t * error)
 
   Returns a positive number r such tat n1 * r = 1 modm (n2)
   *error =  0 if OK
-         = -1 if n1 and n2 are not coprimes
-         = -2 otherwise
- */
+	= -1 if n1 and n2 are not coprimes
+	= -2 otherwise
+*/
 {
 	BD r, x, y;
 
 	*error = 0;
 	if ((r = bdExtendedGCDOfBD(n1, n2, &x, &y)) == NULL)
-	  {
-		  *error = -2;
-		  goto ERRORGCD;
-	  }
+	{
+		*error = -2;
+		goto ERRORGCD;
+	}
 	if (!spIsOneBD(r))
-	  {
-		  *error = -1;
-		  goto ERRORGCD;
-	  }
+	{
+		*error = -1;
+		goto ERRORGCD;
+	}
 	freeBD(y);
 	freeBD(r);
 	if (x->sign == -1)
-	  {
-		  r = spCopyBD(n2);
-		  r->sign = 1;
-		  bdSubtractAbsoluteValuesTo(r, x);
-		  freeBD(x);
-		  return r;
-	  }
+	{
+		r = spCopyBD(n2);
+		r->sign = 1;
+		bdSubtractAbsoluteValuesTo(r, x);
+		freeBD(x);
+		return r;
+	}
 	return x;
 
- ERRORGCD:
+ERRORGCD:
 	freeBD(r);
 	r = NULL;
 	freeBD(x);
@@ -161,11 +161,11 @@ BD bdExponentialBD(BD n1, BD n2)
   This function uses the Sliding-window exponentiation algorithm
   described in A Handbook Of Applied Cryptography by Alfred . J. Menezes,
   Paul C. van Oorschot and Scott A. Vanstone, pag. 616. with k = 8
- */
+*/
 {
 	/*
-	   Trivial cases
-	 */
+		Trivial cases
+	*/
 	if (spIsZeroBD(n1) && spIsZeroBD(n2))
 		return NULL;
 	if (spIsZeroBD(n2))
@@ -179,8 +179,8 @@ BD bdExponentialBD(BD n1, BD n2)
 	s2 = n2->sign;
 	n2->sign = 1;
 	/*
-	   Precomputation: g[i] = n1^i for i = 0,1,2,3,5,7,.....,255
-	 */
+		Precomputation: g[i] = n1^i for i = 0,1,2,3,5,7,.....,255
+	*/
 	BD *g, r;
 	size_t nbit, i;
 
@@ -197,108 +197,108 @@ BD bdExponentialBD(BD n1, BD n2)
 			goto FINAL;
 
 	/*
-	   Example: supose that BITS_PER_DIGIT is 32 and
-	   n2 = 11000000110110111001 00101001100000010100010110001111 01000100010011000000101000101100 in base 2
-	   we break n2 as follows
-	   11 0 0 0 0 0 0 11011011 1001001 0 10011 0 0 0 0 0 0 1010001 0 1100011 11010001 0 0 0 10011 0 0 0 0 0 0 1010001 0 11 0 0
-	   i. e., every part is 
-	   0 
-	   or 
-	   begins and ends with 1 and has length <= 8
+		Example: supose that BITS_PER_DIGIT is 32 and
+		n2 = 11000000110110111001 00101001100000010100010110001111 01000100010011000000101000101100 in base 2
+		we break n2 as follows
+		11 0 0 0 0 0 0 11011011 1001001 0 10011 0 0 0 0 0 0 1010001 0 1100011 11010001 0 0 0 10011 0 0 0 0 0 0 1010001 0 11 0 0
+		i. e., every part is 
+		0 
+		or 
+		begins and ends with 1 and has length <= 8
 
-	   Then, we start with r = 1 and
-	   for every part p from left to right we do
-	   if p = 0 then r = r^2
-	   otherwise  r = r * g[p]      
+		Then, we start with r = 1 and
+		for every part p from left to right we do
+		if p = 0 then r = r^2
+		otherwise  r = r * g[p]      
 
-	 */
+	*/
 	nbit = spBitsInBD(n2);
 	if ((r = spInitWithOneBD()) == NULL)
 		goto FINAL;
 	while (nbit > 0)
-	  {
-		  int8_t bit = spGetBit(n2, nbit - 1);
-		  size_t obit = nbit;
-		  if (bit < 0)
-		    {
-			    goto FINAL;
-		    }
-		  if (bit == 0)
-		    {
-			    /*
-			       Squaring r
-			     */
-			    if (!bdMultiplyBDBy(&r, r))
-			      {
-				      freeBD(r);
-				      r = NULL;
-				      goto FINAL;
-			      }
-			    nbit--;
-		  } else if (bit == 1)
-		    {
-			    size_t ndigit;
-			    uint8_t index;
-			    digit m, mask;
-			    ndigit =
+	{
+		int8_t bit = spGetBit(n2, nbit - 1);
+		size_t obit = nbit;
+		if (bit < 0)
+		{
+			goto FINAL;
+		}
+		if (bit == 0)
+		{
+			/*
+				Squaring r
+			*/
+			if (!bdMultiplyBDBy(&r, r))
+			{
+				freeBD(r);
+				r = NULL;
+				goto FINAL;
+			}
+			nbit--;
+		} else if (bit == 1)
+		{
+			size_t ndigit;
+			uint8_t index;
+			digit m, mask;
+			ndigit =
 				(nbit + BITS_PER_DIGIT - 1) / BITS_PER_DIGIT;
-			    i = nbit % BITS_PER_DIGIT;
-			    if (i == 0)
-				    i = BITS_PER_DIGIT;
-			    m = n2->digits[ndigit - 1];
-			    if (i >= 8)
-			      {
-				      nbit -= 8;
-				      mask = (digit) 255 << (i - 8);
-				      index = (uint8_t) ((m & mask) >> (i - 8));
-			    } else
-			      {
-				      mask = (((digit) 1 << i) - 1);
-				      index = (uint8_t) ((m & mask));
-				      if (ndigit == 1)
-					{
-						nbit -= i;
-				      } else
-					{
-						nbit -= 8;
-						m = n2->digits[ndigit - 2];
-						mask =
-						    ~(((digit) 1 <<
-						       (BITS_PER_DIGIT -
-							(8 - i))) - 1);
-						index =
-						    (index << (8 - i)) |
-						    (uint8_t) ((m & mask) >>
-							       (BITS_PER_DIGIT -
-								(8 - i)));
-					}
-			      }
-			    while ((index % 2) == 0)
-			      {
-				      index /= 2;
-				      nbit++;
-			      }
-			    /*
-			       r = r ^ (2 ^ (onit - nbit))
-			     */
-			    if (!bdExponentialBDToPowerOfTwo(&r, obit - nbit))
-			      {
-				      freeBD(r);
-				      r = NULL;
-				      goto FINAL;
-			      }
-			    /*
-			       r = r * g[index]
-			     */
-			    if (!bdMultiplyBDBy(&r, g[index]))
-			      {
-				      freeBD(r);
-				      r = NULL;
-				      goto FINAL;
-			      }
-		    }
-	  }
- FINAL:
+			i = nbit % BITS_PER_DIGIT;
+			if (i == 0)
+				i = BITS_PER_DIGIT;
+			m = n2->digits[ndigit - 1];
+			if (i >= 8)
+			{
+				nbit -= 8;
+				mask = (digit) 255 << (i - 8);
+				index = (uint8_t) ((m & mask) >> (i - 8));
+			} else
+			{
+				mask = (((digit) 1 << i) - 1);
+				index = (uint8_t) ((m & mask));
+				if (ndigit == 1)
+				{
+					nbit -= i;
+				} else
+				{
+					nbit -= 8;
+					m = n2->digits[ndigit - 2];
+					mask =
+						~(((digit) 1 <<
+							 (BITS_PER_DIGIT -
+								(8 - i))) - 1);
+					index =
+						(index << (8 - i)) |
+						(uint8_t) ((m & mask) >>
+											 (BITS_PER_DIGIT -
+												(8 - i)));
+				}
+			}
+			while ((index % 2) == 0)
+			{
+				index /= 2;
+				nbit++;
+			}
+			/*
+				r = r ^ (2 ^ (onit - nbit))
+			*/
+			if (!bdExponentialBDToPowerOfTwo(&r, obit - nbit))
+			{
+				freeBD(r);
+				r = NULL;
+				goto FINAL;
+			}
+			/*
+				r = r * g[index]
+			*/
+			if (!bdMultiplyBDBy(&r, g[index]))
+			{
+				freeBD(r);
+				r = NULL;
+				goto FINAL;
+			}
+		}
+	}
+FINAL:
 	n1->sign = s1;
 	n2->sign = s2;
 	for (i = 0; i < 256; i++)
@@ -316,7 +316,7 @@ BD bdModExponentialBD(BD n1, BD n2, BD n3)
 
   Is the same algorithm than bdExponentialBD, but now after ever multiplication,
   we take modulus n3
- */
+*/
 {
 	if (spIsZeroBD(n3))
 		return NULL;
@@ -335,8 +335,8 @@ BD bdModExponentialBD(BD n1, BD n2, BD n3)
 	s3 = n2->sign;
 	n3->sign = 1;
 	/*
-	   Precomputation: g[i] = n1^i mod (n3)  for i = 0,1,2,3,5,7,.....,255
-	 */
+		Precomputation: g[i] = n1^i mod (n3)  for i = 0,1,2,3,5,7,.....,255
+	*/
 	BD *g, r;
 	size_t nbit, i;
 
@@ -357,90 +357,90 @@ BD bdModExponentialBD(BD n1, BD n2, BD n3)
 	if ((r = spInitWithOneBD()) == NULL)
 		goto FINAL;
 	while (nbit > 0)
-	  {
-		  int8_t bit = spGetBit(n2, nbit - 1);
-		  size_t obit = nbit;
-		  if (bit < 0)
-		    {
-			    goto FINAL;
-		    }
-		  if (bit == 0)
-		    {
-			    /*
-			       Squaring and modulus: r = r^2 mod(n3);
-			     */
-			    if (!bdMultiplyAndModularBDBy(&r, r, n3))
-			      {
-				      freeBD(r);
-				      r = NULL;
-				      goto FINAL;
-			      }
-			    nbit--;
-		  } else if (bit == 1)
-		    {
-			    size_t ndigit;
-			    uint8_t index;
-			    digit m, mask;
-			    ndigit =
+	{
+		int8_t bit = spGetBit(n2, nbit - 1);
+		size_t obit = nbit;
+		if (bit < 0)
+		{
+			goto FINAL;
+		}
+		if (bit == 0)
+		{
+			/*
+				Squaring and modulus: r = r^2 mod(n3);
+			*/
+			if (!bdMultiplyAndModularBDBy(&r, r, n3))
+			{
+				freeBD(r);
+				r = NULL;
+				goto FINAL;
+			}
+			nbit--;
+		} else if (bit == 1)
+		{
+			size_t ndigit;
+			uint8_t index;
+			digit m, mask;
+			ndigit =
 				(nbit + BITS_PER_DIGIT - 1) / BITS_PER_DIGIT;
-			    i = nbit % BITS_PER_DIGIT;
-			    if (i == 0)
-				    i = BITS_PER_DIGIT;
-			    m = n2->digits[ndigit - 1];
-			    if (i >= 8)
-			      {
-				      nbit -= 8;
-				      mask = (digit) 255 << (i - 8);
-				      index = (uint8_t) ((m & mask) >> (i - 8));
-			    } else
-			      {
-				      mask = (((digit) 1 << i) - 1);
-				      index = (uint8_t) ((m & mask));
-				      if (ndigit == 1)
-					{
-						nbit -= i;
-				      } else
-					{
-						nbit -= 8;
-						m = n2->digits[ndigit - 2];
-						mask =
-						    ~(((digit) 1 <<
-						       (BITS_PER_DIGIT -
-							(8 - i))) - 1);
-						index =
-						    (index << (8 - i)) |
-						    (uint8_t) ((m & mask) >>
-							       (BITS_PER_DIGIT -
-								(8 - i)));
-					}
-			      }
-			    while ((index % 2) == 0)
-			      {
-				      index /= 2;
-				      nbit++;
-			      }
-			    /*
-			       r = r ^ (2 ^ (onit - nbit))  mod (n3)
-			     */
-			    if (!bdExponentialToPowerOfTwoAndModularBD
-				(&r, n3, obit - nbit))
-			      {
-				      freeBD(r);
-				      r = NULL;
-				      goto FINAL;
-			      }
-			    /*
-			       r = r * g[index] and take modulus n3
-			     */
-			    if (!bdMultiplyAndModularBDBy(&r, g[index], n3))
-			      {
-				      freeBD(r);
-				      r = NULL;
-				      goto FINAL;
-			      }
-		    }
-	  }
- FINAL:
+			i = nbit % BITS_PER_DIGIT;
+			if (i == 0)
+				i = BITS_PER_DIGIT;
+			m = n2->digits[ndigit - 1];
+			if (i >= 8)
+			{
+				nbit -= 8;
+				mask = (digit) 255 << (i - 8);
+				index = (uint8_t) ((m & mask) >> (i - 8));
+			} else
+			{
+				mask = (((digit) 1 << i) - 1);
+				index = (uint8_t) ((m & mask));
+				if (ndigit == 1)
+				{
+					nbit -= i;
+				} else
+				{
+					nbit -= 8;
+					m = n2->digits[ndigit - 2];
+					mask =
+						~(((digit) 1 <<
+							 (BITS_PER_DIGIT -
+								(8 - i))) - 1);
+					index =
+						(index << (8 - i)) |
+						(uint8_t) ((m & mask) >>
+											 (BITS_PER_DIGIT -
+												(8 - i)));
+				}
+			}
+			while ((index % 2) == 0)
+			{
+				index /= 2;
+				nbit++;
+			}
+			/*
+				r = r ^ (2 ^ (onit - nbit))  mod (n3)
+			*/
+			if (!bdExponentialToPowerOfTwoAndModularBD
+					(&r, n3, obit - nbit))
+			{
+				freeBD(r);
+				r = NULL;
+				goto FINAL;
+			}
+			/*
+				r = r * g[index] and take modulus n3
+			*/
+			if (!bdMultiplyAndModularBDBy(&r, g[index], n3))
+			{
+				freeBD(r);
+				r = NULL;
+				goto FINAL;
+			}
+		}
+	}
+FINAL:
 	n1->sign = s1;
 	n2->sign = s2;
 	n3->sign = s3;
@@ -456,8 +456,8 @@ uint8_t spIsMinusOneBD(BD n1, BD n2)
   The algorithm uses the absolute values of n1, n2
   
   Returns 1 if n2 == n1 - 1
-          0 otherwise 
- */
+	0 otherwise 
+*/
 {
 	size_t i;
 	if (n1->used != n2->used)

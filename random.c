@@ -36,16 +36,16 @@ BD spRandomBD(size_t nbytes)
 		return NULL;
 
 	if ((fp = fopen("/dev/urandom", "r")) == NULL)
-	  {
-		  freeBD(n);
-		  return NULL;
-	  }
+	{
+		freeBD(n);
+		return NULL;
+	}
 	if (fread(n->digits, sizeof(unsigned char), nbytes, fp) != nbytes)
-	  {
-		  freeBD(n);
-		  fclose(fp);
-		  return NULL;
-	  }
+	{
+		freeBD(n);
+		fclose(fp);
+		return NULL;
+	}
 	n->used = ndigits;
 	fclose(fp);
 	return n;
@@ -62,16 +62,16 @@ unsigned char *randomBytes(size_t nbytes)
 
 	if ((r =
 	     (unsigned char *)malloc(nbytes * sizeof(unsigned char))) == NULL)
-	  {
-		  fclose(fp);
-		  return NULL;
-	  }
+	{
+		fclose(fp);
+		return NULL;
+	}
 	if (fread(r, sizeof(unsigned char), nbytes, fp) != nbytes)
-	  {
-		  free(r);
-		  fclose(fp);
-		  return NULL;
-	  }
+	{
+		free(r);
+		fclose(fp);
+		return NULL;
+	}
 	return r;
 }
 
@@ -96,16 +96,16 @@ uint8_t getRandomSalt(unsigned char *salt)
 	if ((fp = fopen("/dev/urandom", "r")) == NULL)
 		return 0;
 	if (fread(bs, sizeof(unsigned char), 16, fp) != 16)
-	  {
-		  fclose(fp);
-		  return 0;
-	  }
+	{
+		fclose(fp);
+		return 0;
+	}
 	fclose(fp);
 	for (i = 0; i < 16; i++)
-	  {
-		  salt[2 * i] = map[(bs[i] >> 4) & 0x0f];
-		  salt[2 * i + 1] = map[(bs[i]) & 0x0f];
-	  }
+	{
+		salt[2 * i] = map[(bs[i] >> 4) & 0x0f];
+		salt[2 * i + 1] = map[(bs[i]) & 0x0f];
+	}
 	salt[32] = '\0';
 	return 1;
 }

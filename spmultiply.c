@@ -29,24 +29,24 @@ void spMultiplyByDigitBD(BD n, digit m)
 /*
   Computes n = n * m
   If necessary expands n
- */
+*/
 {
 	digit t = 0;
 	doubledigit p;
 	size_t i = 0;
 	size_t d = n->used;
 	if (m == 0)
-	  {
-		  spSetZeroBD(n);
-		  return;
-	  }
+	{
+		spSetZeroBD(n);
+		return;
+	}
 	while (i < d)
-	  {
-		  p = DD(m) * DD(n->digits[i]) + DD(t);
-		  n->digits[i] = LOHALF(p);
-		  t = HIHALF(p);
-		  i++;
-	  }
+	{
+		p = DD(m) * DD(n->digits[i]) + DD(t);
+		n->digits[i] = LOHALF(p);
+		t = HIHALF(p);
+		i++;
+	}
 	if (t == 0)
 		return;
 	if (n->used == n->alloc)
@@ -67,7 +67,7 @@ void spShiftToLeftNumberOfDigits(BD n, digit ndigits)
 void spMultiplyByPowerOfTwo(BD n, digit power)
 /*
   Shift to the left a certain number of bits.
- */
+*/
 {
 	size_t newSize, m, i;
 
@@ -75,23 +75,23 @@ void spMultiplyByPowerOfTwo(BD n, digit power)
 		return;
 
 	/*
-	   Compute the new size and alloc space for it
-	 */
+		Compute the new size and alloc space for it
+	*/
 	newSize = (spBitsInBD(n) + power + BITS_PER_DIGIT - 1) / BITS_PER_DIGIT;
 	if (newSize > n->alloc)
 		spAugmentInSizeDB(n, newSize - n->alloc);
 	/*
-	   If power is 158 and BITS_PER_DIGIT is 32, 178 / 32 = 5
-	   we first shifts letf 5 digits
-	 */
+		If power is 158 and BITS_PER_DIGIT is 32, 178 / 32 = 5
+		we first shifts letf 5 digits
+	*/
 	if (power >= BITS_PER_DIGIT)
-	  {
-		  m = power / BITS_PER_DIGIT;
-		  spShiftToLeftNumberOfDigits(n, m);
-	  }
+	{
+		m = power / BITS_PER_DIGIT;
+		spShiftToLeftNumberOfDigits(n, m);
+	}
 	/*
-	   The remainder 18  bits
-	 */
+		The remainder 18  bits
+	*/
 	m = power % BITS_PER_DIGIT;
 	if (m == 0)
 		return;
@@ -99,26 +99,26 @@ void spMultiplyByPowerOfTwo(BD n, digit power)
 	digit mask, shift, r0, r1;
 	digit *aux;
 	/*
-	   m = 18
-	   14              18
-	   mask = 00000000000000111111111111111111
-	   shift = 32 - 18 = 14 
-	 */
+		m = 18
+		14              18
+		mask = 00000000000000111111111111111111
+		shift = 32 - 18 = 14 
+	*/
 	shift = BITS_PER_DIGIT - m;
 	mask = ((digit) 1 << m) - 1;
 	aux = n->digits;
 	r0 = 0;
 	for (i = 0; i < n->used; i++)
-	  {
-		  /*
-		     r1 stores the first 18 bits of *aux
-		     *aux stores 
-		   */
-		  r1 = (*aux >> shift) & mask;
-		  *aux = ((*aux << m) | r0);
-		  aux++;
-		  r0 = r1;
-	  }
+	{
+		/*
+			r1 stores the first 18 bits of *aux
+			*aux stores 
+			*/
+		r1 = (*aux >> shift) & mask;
+		*aux = ((*aux << m) | r0);
+		aux++;
+		r0 = r1;
+	}
 	if (r0 > 0)
 		n->digits[n->used++] = r0;
 	n->used = spSizeOfBD(n);

@@ -32,15 +32,15 @@ uint8_t spIsDivisibleByDigit(BD n, digit m)
 	digit t;
 	size_t i, k;
 	for (i = 0; i < n->used; i++)
-	  {
-		  k = n->used - i - 1;
-		  w = (w << BITS_PER_DIGIT) | ((doubledigit) n->digits[k]);
-		  if (w >= m)
-		    {
-			    t = (digit) (w / m);
-			    w -= ((doubledigit) t) * ((doubledigit) m);
-		    }
-	  }
+	{
+		k = n->used - i - 1;
+		w = (w << BITS_PER_DIGIT) | ((doubledigit) n->digits[k]);
+		if (w >= m)
+		{
+			t = (digit) (w / m);
+			w -= ((doubledigit) t) * ((doubledigit) m);
+		}
+	}
 	if (w == 0)
 		return 1;
 	return 0;
@@ -51,11 +51,11 @@ uint8_t spDivisibleSmallPrime(BD n)
 	size_t i;
 	digit p;
 	for (i = 0; i < sizeSmallPrimes; i++)
-	  {
-		  p = (digit) (smallPrimes[i]);
-		  if (spIsDivisibleByDigit(n, p))
-			  return 1;
-	  }
+	{
+		p = (digit) (smallPrimes[i]);
+		if (spIsDivisibleByDigit(n, p))
+			return 1;
+	}
 	return 0;
 }
 
@@ -66,91 +66,91 @@ int8_t spRabinMillerTestBD(BD n, size_t iterations)
   Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone
   CRC Press
   Pag 138-140
- */
+*/
 {
 	BD a, m, z;
 	size_t b, i, j;
 	int8_t r;
 	/*
-	   Step 1
-	   Obtain the largest b such that n - 1 = 2^b * m
-	 */
+		Step 1
+		Obtain the largest b such that n - 1 = 2^b * m
+	*/
 	if ((m = spCopyBD(n)) == NULL)
-	  {
-		  r = -1;
-		  goto final;
-	  }
+	{
+		r = -1;
+		goto final;
+	}
 	m->digits[0] &= MAX_DIGIT - 1;
 	b = spLowerBitsZeroInBD(m);
 	spShiftToRightNumberOfBits(m, b);
 	/*
-	   Step 2
-	   Start iterations
-	 */
+		Step 2
+		Start iterations
+	*/
 	for (i = 0; i < iterations; i++)
-	  {
-		  /*
-		     Step 2.1
-		     Choose a random number, a, such that a < n
-		   */
-		  for (;;)
-		    {
-			    a = spRandomBD(BYTES_PER_DIGIT * n->used);
-			    if (spCompareAbsoluteValues(n, a) < 0)
-				    break;
-			    else
-				    freeBD(a);
-		    }
-		  /*
-		     do
-		     {
-		     a = spRandomBD(BYTES_PER_DIGIT * n->used);
-		     }
-		     while (spCompareAbsoluteValues(n,a) >= 0);
-		   */
-		  /*
-		     Step 2.2
-		     Compute z = a^m mod (n)
-		   */
-		  if ((z = bdModExponentialBD(a, m, n)) == NULL)
-		    {
-			    r = -1;
-			    goto final;
-		    }
-		  /*
-		     Step 2.3
-		     If z != 1 and z != n - 1 do the following
-		   */
-		  if (!((spIsOneBD(z) || spIsMinusOneBD(n, z))))
-		    {
-			    j = 1;
-			    while ((j < b) && (!spIsMinusOneBD(n, z)))
-			      {
-				      if (bdExponentialToPowerOfTwoAndModularBD
+	{
+		/*
+			Step 2.1
+			Choose a random number, a, such that a < n
+		*/
+		for (;;)
+		{
+			a = spRandomBD(BYTES_PER_DIGIT * n->used);
+			if (spCompareAbsoluteValues(n, a) < 0)
+				break;
+			else
+				freeBD(a);
+		}
+		/*
+			do
+			{
+			a = spRandomBD(BYTES_PER_DIGIT * n->used);
+			}
+			while (spCompareAbsoluteValues(n,a) >= 0);
+		*/
+		/*
+			Step 2.2
+			Compute z = a^m mod (n)
+		*/
+		if ((z = bdModExponentialBD(a, m, n)) == NULL)
+		{
+			r = -1;
+			goto final;
+		}
+		/*
+			Step 2.3
+			If z != 1 and z != n - 1 do the following
+		*/
+		if (!((spIsOneBD(z) || spIsMinusOneBD(n, z))))
+		{
+			j = 1;
+			while ((j < b) && (!spIsMinusOneBD(n, z)))
+			{
+				if (bdExponentialToPowerOfTwoAndModularBD
 					  (&z, n, 1) == 0)
-					{
-						r = -1;
-						goto final;
-					}
-				      if (spIsOneBD(z))
-					{
-						r = 0;
-						goto final;
-					}
-				      j += 1;
-			      }
-			    if (!spIsMinusOneBD(n, z))
-			      {
-				      r = 0;
-				      goto final;
-			      }
-		    }
-		  freeBD(a);
-		  freeBD(z);
-	  }
+				{
+					r = -1;
+					goto final;
+				}
+				if (spIsOneBD(z))
+				{
+					r = 0;
+					goto final;
+				}
+				j += 1;
+			}
+			if (!spIsMinusOneBD(n, z))
+			{
+				r = 0;
+				goto final;
+			}
+		}
+		freeBD(a);
+		freeBD(z);
+	}
 	r = 1;
 
- final:
+final:
 	freeBD(a);
 	freeBD(z);
 	freeBD(m);
@@ -186,25 +186,25 @@ BD bdStrongRandomPrime(size_t bits)
   Alfred J. Menezes, Paul C. van Oorschot and Scott A. Vanstone
   CRC Press
   Pag 149-150
- */
+*/
 {
 	BD r, s, t, i, p, a;
 	r = s = t = i = p = a = NULL;
 	if (bits < 512)
 		bits = 512;
 	/*
-	   Genetae two random primes s and t
-	 */
+		Genetae two random primes s and t
+	*/
 	if ((s = bdRandomPrime(bits / 2)) == NULL)
 		goto final;
 	if ((t = bdRandomPrime(bits / 2)) == NULL)
 		goto final;
 	/*
-	   Step 2
-	   Select an integer i and set r = 2 * i * t + 1
-	   If r is prime, continue with step 3
-	   If not, set r = r + 2 * t and test again
-	 */
+		Step 2
+		Select an integer i and set r = 2 * i * t + 1
+		If r is prime, continue with step 3
+		If not, set r = r + 2 * t and test again
+	*/
 	if ((i = spInitWithIntegerBD(0x8000)) == NULL)
 		goto final;
 	spMultiplyByPowerOfTwo(t, 1);	// t = 2 * t
@@ -212,15 +212,15 @@ BD bdStrongRandomPrime(size_t bits)
 		goto final;
 	spAddDigitToBD(r, (digit) 1, 0);	// r = r + 1 
 	for (;;)
-	  {
-		  if (spIsProbablePrime(r, 20))
-			  break;
-		  bdAddAbsoluteValueTo(r, t);
-	  }
+	{
+		if (spIsProbablePrime(r, 20))
+			break;
+		bdAddAbsoluteValueTo(r, t);
+	}
 	/*
-	   Step 3
-	   Compute p = 2 * (s^(r-2) mod(r)) * s - 1
-	 */
+		Step 3
+		Compute p = 2 * (s^(r-2) mod(r)) * s - 1
+	*/
 	if ((p = spCopyBD(r)) == NULL)	// p = r
 		goto final;
 	spSubtractDigitToBD(p, (digit) 2);	// p = p - 2
@@ -233,11 +233,11 @@ BD bdStrongRandomPrime(size_t bits)
 	spMultiplyByPowerOfTwo(p, 1);	// p = 2 * p
 	spSubtractDigitToBD(p, (digit) 1);	// p = p -1
 	/*
-	   Step 4
-	   Select an integer i and set p = p + 2 * i * r * s 
-	   If p is prime, return p
-	   If not, set p = p + 2 * r * s and test again
-	 */
+		Step 4
+		Select an integer i and set p = p + 2 * i * r * s 
+		If p is prime, return p
+		If not, set p = p + 2 * r * s and test again
+	*/
 	freeBD(i);
 	if ((i = spInitWithIntegerBD(0x8000)) == NULL)
 		goto final;
@@ -248,19 +248,19 @@ BD bdStrongRandomPrime(size_t bits)
 		goto final;
 	bdAddAbsoluteValueTo(p, i);	// p = p + i
 	for (;;)
-	  {
-		  if (spIsProbablePrime(p, 20))
-		    {
-			    freeBD(r);
-			    freeBD(s);
-			    freeBD(t);
-			    freeBD(i);
-			    return p;
-		    }
-		  bdAddAbsoluteValueTo(p, r);
-	  }
+	{
+		if (spIsProbablePrime(p, 20))
+		{
+			freeBD(r);
+			freeBD(s);
+			freeBD(t);
+			freeBD(i);
+			return p;
+		}
+		bdAddAbsoluteValueTo(p, r);
+	}
 
- final:
+final:
 	freeBD(r);
 	freeBD(s);
 	freeBD(t);

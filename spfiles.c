@@ -30,7 +30,7 @@
 #include <fcntl.h>
 
 static const char *spDigits =
-    "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
+	"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
 
 char *spStringFromFile(const char *filename, int8_t * sign)
 {
@@ -39,65 +39,65 @@ char *spStringFromFile(const char *filename, int8_t * sign)
 		return NULL;
 	int c;
 	/*
-	   Discard initial spaces
-	 */
+		Discard initial spaces
+	*/
 	do
-	  {
-		  c = getc(fp);
-	  }
+	{
+		c = getc(fp);
+	}
 	while (isspace(c));
 	/*
-	   Sign
-	 */
+		Sign
+	*/
 	*sign = 1;
 	if (c == '+')
-	  {
-		  *sign = 1;
-		  c = getc(fp);
+	{
+		*sign = 1;
+		c = getc(fp);
 	} else if (c == '-')
-	  {
-		  *sign = -1;
-		  c = getc(fp);
-	  }
+	{
+		*sign = -1;
+		c = getc(fp);
+	}
 	/*
-	   Discard more spaces
-	 */
+		Discard more spaces
+	*/
 	while (isspace(c))
 		c = getc(fp);
 	/*
-	   Dircard initial zeros
-	 */
+		Dircard initial zeros
+	*/
 	while (c == '0')
 		c = getc(fp);
 	/*
-	   Read discarding non-digits
-	 */
+		Read discarding non-digits
+	*/
 	char *str;
 	size_t alloc_size, str_size;
 	alloc_size = 256;
 	str_size = 0;
 	make_vector(str, alloc_size);
 	while (c != EOF)
-	  {
-		  if (!isdigit(c))
-		    {
-			    c = getc(fp);
-			    continue;
-		    }
-		  if (str_size == alloc_size)
-		    {
-			    alloc_size = alloc_size * 3 / 2;
-			    expand_vector(str, alloc_size);
-		    }
-		  str[str_size++] = c;
-		  c = getc(fp);
-	  }
+	{
+		if (!isdigit(c))
+		{
+			c = getc(fp);
+			continue;
+		}
+		if (str_size == alloc_size)
+		{
+			alloc_size = alloc_size * 3 / 2;
+			expand_vector(str, alloc_size);
+		}
+		str[str_size++] = c;
+		c = getc(fp);
+	}
 	fclose(fp);
 	if (str_size == alloc_size)
-	  {
-		  alloc_size += 1;
-		  expand_vector(str, alloc_size);
-	  }
+	{
+		alloc_size += 1;
+		expand_vector(str, alloc_size);
+	}
 	str[str_size] = '\0';
 	return str;
 }
@@ -114,14 +114,14 @@ BD spBDFromString(const char *s, int8_t base, int8_t sign)
 
 	n->sign = sign;
 	for (i = 0; i < nchars; i++)
-	  {
-		  char ch = s[i];
-		  for (j = 0; j < base; j++)
-			  if (spDigits[j] == ch)
-				  break;
-		  spMultiplyByDigitBD(n, base);
-		  spAddDigitToBD(n, j, 0);
-	  }
+	{
+		char ch = s[i];
+		for (j = 0; j < base; j++)
+			if (spDigits[j] == ch)
+				break;
+		spMultiplyByDigitBD(n, base);
+		spAddDigitToBD(n, j, 0);
+	}
 	return n;
 }
 
@@ -143,11 +143,11 @@ void spReverseString(char *s, size_t len)
 	p = s;
 	q = s + (len - 1);
 	while (q > p)
-	  {
-		  t = *q;
-		  *q-- = *p;
-		  *p++ = t;
-	  }
+	{
+		t = *q;
+		*q-- = *p;
+		*p++ = t;
+	}
 }
 
 char *spBDToString(BD n, digit base)
@@ -160,12 +160,12 @@ char *spBDToString(BD n, digit base)
 		return NULL;
 
 	if (spSizeOfBD(n) == 0)
-	  {
-		  make_vector(s, 2);
-		  s[0] = '0';
-		  s[1] = '\0';
-		  return s;
-	  }
+	{
+		make_vector(s, 2);
+		s[0] = '0';
+		s[1] = '\0';
+		return s;
+	}
 	size_t allocSize = 1024;
 	size_t strSize = 0;
 
@@ -173,24 +173,24 @@ char *spBDToString(BD n, digit base)
 	if ((aux = spCopyBD(n)) == NULL)
 		return NULL;
 	while (spSizeOfBD(aux) > 0)
-	  {
-		  if (spDivideByDigitBD(aux, base, &r) < 0)
-		    {
-			    free_vector(s);
-			    return NULL;
-		    }
-		  if (strSize == allocSize)
-		    {
-			    allocSize = allocSize * 3 / 2;
-			    expand_vector(s, allocSize);
-		    }
-		  s[strSize++] = spDigits[r];
-	  }
+	{
+		if (spDivideByDigitBD(aux, base, &r) < 0)
+		{
+			free_vector(s);
+			return NULL;
+		}
+		if (strSize == allocSize)
+		{
+			allocSize = allocSize * 3 / 2;
+			expand_vector(s, allocSize);
+		}
+		s[strSize++] = spDigits[r];
+	}
 	if ((allocSize - strSize) < 2)
-	  {
-		  allocSize += 2;
-		  expand_vector(s, allocSize);
-	  }
+	{
+		allocSize += 2;
+		expand_vector(s, allocSize);
+	}
 	if (n->sign == -1)
 		s[strSize++] = '-';
 	s[strSize] = '\0';
@@ -237,11 +237,11 @@ void spPrintBytes(BD n)
 }
 
 unsigned char *readFileBinaryMode(const char *filename, size_t * len,
-				  size_t * alloc)
+																	size_t * alloc)
 /*
   Reads the contents of the file and returns it in a vector of unsiged chars. The size
   of the file, i.e., the numbers of bytes read is stored in *len.
- */
+*/
 {
 	int fd;
 
@@ -259,49 +259,47 @@ unsigned char *readFileBinaryMode(const char *filename, size_t * len,
 		return NULL;
 
 	while ((n = read(fd, buffer, 4096)) > 0)
-	  {
-		  if ((*alloc - *len) < n)
-		    {
-			    *alloc += (*alloc * 4) / 3;
-			    if ((str =
-				 (unsigned char *)realloc(str,
-							  *alloc *
-							  sizeof(unsigned
-								 char))) ==
-				NULL)
-				    return NULL;
-		    }
-		  memcpy(str + *len, buffer, n);
-		  *len += n;
-	  }
+	{
+		if ((*alloc - *len) < n)
+		{
+			*alloc += (*alloc * 4) / 3;
+			if ((str =
+					 (unsigned char *)realloc(str,
+																		*alloc *
+																		sizeof(unsigned
+																					 char))) ==
+					NULL)
+				return NULL;
+		}
+		memcpy(str + *len, buffer, n);
+		*len += n;
+	}
 	close(fd);
 	if (n < 0)
-	  {
-		  free(str);
-		  str = NULL;
-		  *len = 0;
-		  *alloc = 0;
-		  return NULL;
-	  }
+	{
+		free(str);
+		str = NULL;
+		*len = 0;
+		*alloc = 0;
+		return NULL;
+	}
 	return str;
 }
 
 int writeFileBinaryMode(const char *filename, unsigned char *data,
-			size_t length)
+												size_t length)
 {
 	int fd;
 
-	if ((fd =
-	     open(filename, O_WRONLY | O_CREAT | O_TRUNC,
-		  S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) < 0)
+	if ((fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC,S_IRUSR | S_IWUSR)) < 0)
 		return 0;
 
 	if (write(fd, data, length) != length)
-	  {
-		  close(fd);
-		  unlink(filename);
-		  return 0;
-	  }
+	{
+		close(fd);
+		unlink(filename);
+		return 0;
+	}
 	close(fd);
 	return 1;
 }

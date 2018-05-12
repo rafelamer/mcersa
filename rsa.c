@@ -43,7 +43,7 @@ PrivateRSAKey bdInitRSAPrivateKey()
 	rsa->c2 = NULL;
 	return rsa;
 
- errorRSA:
+errorRSA:
 	freePrivateRSAKey(rsa);
 	return NULL;
 }
@@ -92,37 +92,37 @@ PrivateRSAKey genRSAPrivateKey(size_t bits)
 		goto errorRSA;
 
 	/*
-	   Encryption key ek and decription key dk
-	 */
+		Encryption key ek and decription key dk
+	*/
 	if ((ek = spInitWithIntegerBD(65537)) == NULL)
 		goto errorRSA;
 	for (;;)
-	  {
-		  dk = bdInverseModularBD(ek, phi, &error);
-		  if (error == 0)
-			  break;
-		  if (error == -1)
-			  spAddDigitToBD(ek, (digit) 1, 0);
-		  else
-			  goto errorRSA;
-	  }
+	{
+		dk = bdInverseModularBD(ek, phi, &error);
+		if (error == 0)
+			break;
+		if (error == -1)
+			spAddDigitToBD(ek, (digit) 1, 0);
+		else
+			goto errorRSA;
+	}
 	/*
-	   c2 = q^(-1) mod (p)
-	 */
+		c2 = q^(-1) mod (p)
+	*/
 	if ((c2 = bdInverseModularBD(q, p, &error)) == NULL)
 		goto errorRSA;
 
 	/*
-	   Numbers kp and kq
-	 */
+		Numbers kp and kq
+	*/
 	if ((kp = bdModularBD(dk, e)) == NULL)
 		goto errorRSA;
 	if ((kq = bdModularBD(dk, d)) == NULL)
 		goto errorRSA;
 
 	/*
-	   Set numbers in rsa
-	 */
+		Set numbers in rsa
+	*/
 	freeBD(e);
 	e = NULL;
 	freeBD(d);
@@ -139,7 +139,7 @@ PrivateRSAKey genRSAPrivateKey(size_t bits)
 	rsa->c2 = c2;
 	return rsa;
 
- errorRSA:
+errorRSA:
 	freePrivateRSAKey(rsa);
 	freeBD(p);
 	freeBD(q);

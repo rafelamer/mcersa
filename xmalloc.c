@@ -33,26 +33,26 @@ void *malloc_or_exit(size_t nbytes, const char *file, int line)
 {
 	void *x;
 	if ((x = calloc(nbytes, 1)) == NULL)
-	  {
-		  fprintf(stderr, "%s:line %d: calloc() of %zu bytes failed\n",
-			  file, line, nbytes);
-		  exit(EXIT_FAILURE);
+	{
+		fprintf(stderr, "%s:line %d: calloc() of %zu bytes failed\n",
+						file, line, nbytes);
+		exit(EXIT_FAILURE);
 	} else
-	  {
-		  return x;
-	  }
+	{
+		return x;
+	}
 }
 
 void *realloc_or_exit(void *v, size_t nbytes, const char *file, int line)
 {
 	void *x;
 	if ((x = realloc(v, nbytes)) == NULL)
-	  {
-		  fprintf(stderr, "%s:line %d: realloc() of %zu bytes failed\n",
-			  file, line, nbytes);
-		  exit(EXIT_FAILURE);
+	{
+		fprintf(stderr, "%s:line %d: realloc() of %zu bytes failed\n",
+						file, line, nbytes);
+		exit(EXIT_FAILURE);
 	} else
-	  {
-		  return x;
-	  }
+	{
+		return x;
+	}
 }

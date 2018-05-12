@@ -30,7 +30,7 @@
 #include <aes.h>
 
 int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
-		    uint8_t mode)
+										uint8_t mode)
 {
 	char *passphrase;
 	size_t nblocks, nbytes, alloc;
@@ -48,71 +48,71 @@ int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
 		goto final;
 	if ((rsa == NULL)
 	    && ((passphrase = getAndVerifyPassphrase(10)) == NULL))
-	  {
-		  ret = ENCRYPTION_WRONG_PASSWORD;
-		  goto final;
-	  }
+	{
+		ret = ENCRYPTION_WRONG_PASSWORD;
+		goto final;
+	}
 
 	/*
-	   Compress
-	 */
+		Compress
+	*/
 	if (mode & STACKCOMPRESS)
-	  {
-		  if ((text =
-		       zlib_compress_data(st->data, st->used, &nbytes,
-					  &alloc)) == NULL)
-			  goto final;
-		  stSetDataInStack(st, text, nbytes, alloc);
-	  }
+	{
+		if ((text =
+				 zlib_compress_data(st->data, st->used, &nbytes,
+														&alloc)) == NULL)
+			goto final;
+		stSetDataInStack(st, text, nbytes, alloc);
+	}
 
 	/*
-	   Encryption process
-	   lbc is the length of the data before encrypt
-	 */
+		Encryption process
+		lbc is the length of the data before encrypt
+	*/
 	unsigned long long lbc;
 	lbc = st->used;
 	memset(st->data + st->used, 0, st->alloc - st->used);
 	nblocks = (st->used + AES_BLOCK_SIZE - 1) / AES_BLOCK_SIZE;
 	if (st->alloc < nblocks * AES_BLOCK_SIZE)
-	  {
-		  size_t add = nblocks * AES_BLOCK_SIZE - st->alloc + 128;
-		  if (!stExpandStackInSize(st, add))
-			  goto final;
-	  }
+	{
+		size_t add = nblocks * AES_BLOCK_SIZE - st->alloc + 128;
+		if (!stExpandStackInSize(st, add))
+			goto final;
+	}
 	/*
-	   Compute the keys
-	 */
+		Compute the keys
+	*/
 	if (rsa == NULL)
-	  {
-		  if (pkcs5_pbkdf2
-		      (passphrase, strlen(passphrase), salt,
-		       strlen((char *)salt), keys, KEK_KEY_LEN, ITERATION) != 0)
-			  goto final;
+	{
+		if (pkcs5_pbkdf2
+				(passphrase, strlen(passphrase), salt,
+				 strlen((char *)salt), keys, KEK_KEY_LEN, ITERATION) != 0)
+			goto final;
 	} else
-	  {
-		  /*
-		     We set random keys and we encrypt it with the public key
-		   */
-		  size_t ndigits;
-		  if (!randomBytesToBuffer(keys, KEK_KEY_LEN))
-			  goto final;
-		  nbytes = KEK_KEY_LEN * sizeof(unsigned char);
-		  ndigits = (nbytes + BYTES_PER_DIGIT - 1) / BYTES_PER_DIGIT;
-		  if ((m = spInitWithAllocBD(ndigits)) == NULL)
-			  goto final;
-		  m->used = ndigits;
-		  memcpy((void *)(m->digits), keys, nbytes);
-		  if ((c = publicEncryptOAEPRSA(rsa, m)) == NULL)
-			  goto final;
-		  freeBD(m);
-	  }
+	{
+		/*
+			We set random keys and we encrypt it with the public key
+		*/
+		size_t ndigits;
+		if (!randomBytesToBuffer(keys, KEK_KEY_LEN))
+			goto final;
+		nbytes = KEK_KEY_LEN * sizeof(unsigned char);
+		ndigits = (nbytes + BYTES_PER_DIGIT - 1) / BYTES_PER_DIGIT;
+		if ((m = spInitWithAllocBD(ndigits)) == NULL)
+			goto final;
+		m->used = ndigits;
+		memcpy((void *)(m->digits), keys, nbytes);
+		if ((c = publicEncryptOAEPRSA(rsa, m)) == NULL)
+			goto final;
+		freeBD(m);
+	}
 	/*
-	   Encrypt
-	 */
+		Encrypt
+	*/
 	aes_key_setup(keys, key_schedule, 256);
 	if ((text =
 	     (unsigned char *)malloc(nblocks * AES_BLOCK_SIZE *
-				     sizeof(unsigned char))) == NULL)
+															 sizeof(unsigned char))) == NULL)
 		goto final;
 	if (!aes_encrypt_cbc
 	    (st->data, nblocks * AES_BLOCK_SIZE, text, key_schedule, 256,
@@ -143,21 +143,21 @@ int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
 	SAVEDEBUG("debug/rsacryptsequence.bin", st->data, st->used);
 #endif
 	/*
-	   Encode to Base64
-	 */
+		Encode to Base64
+	*/
 	if (mode & STACKENCODE)
-	  {
-		  if ((text = b64_encode(st->data, st->used, &nbytes)) == NULL)
-			  goto final;
-		  stSetDataInStack(st, text, nbytes, nbytes);
-		  text = NULL;
-	  }
+	{
+		if ((text = b64_encode(st->data, st->used, &nbytes)) == NULL)
+			goto final;
+		stSetDataInStack(st, text, nbytes, nbytes);
+		text = NULL;
+	}
 #if 0
 	SAVEDEBUG("debug/rsacryptsequence64.bin", st->data, st->used);
 #endif
 	ret = ENCRYPTION_OK;
 
- final:
+final:
 	freeString(passphrase);
 	freeBD(m);
 	freeBD(c);
@@ -165,7 +165,7 @@ int encryptStackAES(Stack st, PublicRSAKey rsa, unsigned char *salt,
 }
 
 int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
-		    uint8_t mode)
+										uint8_t mode)
 {
 	char *passphrase;
 	size_t nbytes, nblocks, length;
@@ -186,8 +186,8 @@ int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
 	SAVEDEBUG("debug/de-rsacryptsequence64.bin", st->data, st->used);
 #endif
 	/*
-	   Decode from Base64
-	 */
+		Decode from Base64
+	*/
 	if (mode & STACKENCODE)
 	{
 		if ((text = b64_decode(st->data, st->used, &nbytes)) == NULL)
@@ -199,37 +199,37 @@ int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
 	SAVEDEBUG("debug/de-rsacryptsequence.bin", st->data, st->used);
 #endif
 	/*
-	   Decrypt the data
-	 */
+		Decrypt the data
+	*/
 	length = stReadStartSequenceAndLength(st, &error);
 	if ((length == 0) || (error != 0))
 		goto final;
 	if (length != stBytesRemaining(st))
 		goto final;
 	if (mode & STACKSALT)
-	  {
-		  if ((s = stReadOctetString(st, &length, &error)) == NULL)
-			  goto final;
-		  if ((length != 32) || (error != 0))
-			  goto final;
-		  memcpy(salt, s, 32);
-		  salt[32] = '\0';
-		  freeString(s);
-	  }
+	{
+		if ((s = stReadOctetString(st, &length, &error)) == NULL)
+			goto final;
+		if ((length != 32) || (error != 0))
+			goto final;
+		memcpy(salt, s, 32);
+		salt[32] = '\0';
+		freeString(s);
+	}
 
 	/*
-	   If we are encrypted the data with a public key,
-	   we read the encryption key from the Stack
-	 */
+		If we are encrypted the data with a public key,
+		we read the encryption key from the Stack
+	*/
 	if (rsa != NULL)
-	  {
-		  if (((c = stReadBD(st, &error)) == NULL) || (error != 0))
-			  goto final;
-		  if ((m = privateDecryptOAEPRSA(rsa, c)) == NULL)
-			  goto final;
-		  freeBD(c);
-		  memcpy(keys, m->digits, KEK_KEY_LEN);
-	  }
+	{
+		if (((c = stReadBD(st, &error)) == NULL) || (error != 0))
+			goto final;
+		if ((m = privateDecryptOAEPRSA(rsa, c)) == NULL)
+			goto final;
+		freeBD(c);
+		memcpy(keys, m->digits, KEK_KEY_LEN);
+	}
 
 	if (((lbc = stReadInteger(st, &error)) == 0) || (error != 0))
 		goto final;
@@ -244,44 +244,44 @@ int decryptStackAES(Stack st, PrivateRSAKey rsa, unsigned char *salt,
 #endif
 
 	if (rsa == NULL)
-	  {
-		  if ((passphrase =
-		       getPassword("Enter the decryption passphrase: ")) ==
-		      NULL)
-			  goto final;
-		  if (pkcs5_pbkdf2
-		      (passphrase, strlen(passphrase), salt,
-		       strlen((char *)salt), keys, KEK_KEY_LEN, ITERATION) != 0)
-			  goto final;
-	  }
+	{
+		if ((passphrase =
+				 getPassword("Enter the decryption passphrase: ")) ==
+				NULL)
+			goto final;
+		if (pkcs5_pbkdf2
+				(passphrase, strlen(passphrase), salt,
+				 strlen((char *)salt), keys, KEK_KEY_LEN, ITERATION) != 0)
+			goto final;
+	}
 	nblocks = st->used / AES_BLOCK_SIZE;
 	if ((text =
 	     (unsigned char *)malloc(nblocks * AES_BLOCK_SIZE *
-				     sizeof(unsigned char))) == NULL)
+															 sizeof(unsigned char))) == NULL)
 		goto final;
 	aes_key_setup(keys, key_schedule, 256);
 	aes_decrypt_cbc(st->data, nblocks * AES_BLOCK_SIZE, text, key_schedule,
-			256, keys + 32);
+									256, keys + 32);
 	stSetDataInStack(st, text, lbc, nblocks * AES_BLOCK_SIZE);
 #if 0
 	SAVEDEBUG("debug/de-rsa.bin", st->data, st->used);
 #endif
 
 	/*
-	   Uncompress
-	 */
+		Uncompress
+	*/
 	if (mode & STACKCOMPRESS)
-	  {
-		  if ((text =
-		       zlib_uncompress_data(st->data, st->used, &nbytes,
-					    &length)) == NULL)
-			  goto final;
-		  stSetDataInStack(st, text, nbytes, length);
-	  }
+	{
+		if ((text =
+				 zlib_uncompress_data(st->data, st->used, &nbytes,
+															&length)) == NULL)
+			goto final;
+		stSetDataInStack(st, text, nbytes, length);
+	}
 
 	ret = ENCRYPTION_OK;
 
- final:
+final:
 	freeString(passphrase);
 	freeString(s);
 	freeBD(m);

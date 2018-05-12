@@ -37,7 +37,7 @@ BD privateDecryptRSA(PrivateRSAKey rsa, BD c)
   m2 = c^kq mod(q)
   h = (m1 - m2)*c2 mod(p)
   m = m2 + q * h
- */
+*/
 {
 	BD m, m1, m2, h;
 	int r = 0;
@@ -62,7 +62,7 @@ BD privateDecryptRSA(PrivateRSAKey rsa, BD c)
 	bdAddAbsoluteValueTo(m, m2);
 	r = 1;
 
- final:
+final:
 	freeBD(m1);
 	freeBD(m2);
 	freeBD(h);
@@ -106,7 +106,7 @@ BD privateDecryptOAEPRSA(PrivateRSAKey rsa, BD c)
 	memcpy(dg, EM + (sizeEM - size), nbytes);
 	m->used = used;
 
- final:
+final:
 	freeBD(p);
 	freeString(EM);
 	return m;
@@ -147,7 +147,7 @@ BD publicDecryptOAEPRSA(PublicRSAKey rsa, BD c)
 	memcpy(dg, EM + (sizeEM - size), nbytes);
 	m->used = used;
 
- final:
+final:
 	freeBD(p);
 	freeString(EM);
 	return m;

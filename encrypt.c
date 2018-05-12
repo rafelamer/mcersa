@@ -78,7 +78,7 @@ BD publicEncryptOAEPRSA(PublicRSAKey rsa, BD m)
 	if ((c = publicEncryptRSA(rsa, p)) == NULL)
 		goto final;
 
- final:
+final:
 	freeString(hash);
 	freeBD(p);
 
@@ -124,7 +124,7 @@ BD privateEncryptOAEPRSA(PrivateRSAKey rsa, BD m)
 	if ((c = privateDecryptRSA(rsa, p)) == NULL)
 		goto final;
 
- final:
+final:
 	freeString(hash);
 	freeString(EM);
 	freeBD(p);

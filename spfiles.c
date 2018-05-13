@@ -252,10 +252,10 @@ unsigned char *readFileBinaryMode(const char *filename, size_t * len,
 	unsigned char buffer[4096];
 	int n;
 
+	str = NULL;
 	*alloc = 4096;
 	*len = 0;
-	if ((str =
-	     (unsigned char *)malloc(*alloc * sizeof(unsigned char))) == NULL)
+	if ((str = (unsigned char *)calloc(*alloc,sizeof(unsigned char))) == NULL)
 		return NULL;
 
 	while ((n = read(fd, buffer, 4096)) > 0)
@@ -263,12 +263,7 @@ unsigned char *readFileBinaryMode(const char *filename, size_t * len,
 		if ((*alloc - *len) < n)
 		{
 			*alloc += (*alloc * 4) / 3;
-			if ((str =
-					 (unsigned char *)realloc(str,
-																		*alloc *
-																		sizeof(unsigned
-																					 char))) ==
-					NULL)
+			if ((str = (unsigned char *)realloc(str,*alloc * sizeof(unsigned char))) == NULL)
 				return NULL;
 		}
 		memcpy(str + *len, buffer, n);

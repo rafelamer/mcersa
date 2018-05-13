@@ -1,4 +1,4 @@
-CFLAGS = -g -fPIC -I.
+CFLAGS = -O3 -fPIC -I.
 CC = gcc
 OBJECTS = xmalloc.o sputil.o spdivide.o spmultiply.o spfiles.o \
 addition.o subtraction.o multiplication.o division.o random.o gcd.o \

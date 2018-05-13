@@ -102,7 +102,7 @@ void spFreeBD(BD * n)
 	{
 		if ((*n)->digits != NULL)
 		{
-			memset((void *)((*n)->digits),0,(*n)->used * BITS_PER_DIGIT);
+			memset((void *)((*n)->digits),0,(*n)->used * BYTES_PER_DIGIT);
 			free_vector((*n)->digits);
 		}
 		free(*n);

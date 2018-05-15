@@ -28,12 +28,12 @@
 #include <fcntl.h>
 #include <aes.h>
 
-static const char brpk[] = "-----BEGIN RSA PRIVATE KEY-----";
-static const char erpk[] = "-----END RSA PRIVATE KEY-----";
-static const char bpk[] = "-----BEGIN PRIVATE KEY-----";
-static const char epk[] = "-----END PRIVATE KEY-----";
-static const char bpubk[] = "-----BEGIN PUBLIC KEY-----";
-static const char epubk[] = "-----END PUBLIC KEY-----";
+static const unsigned char brpk[] = "-----BEGIN RSA PRIVATE KEY-----";
+static const unsigned char erpk[] = "-----END RSA PRIVATE KEY-----";
+static const unsigned char bpk[] = "-----BEGIN PRIVATE KEY-----";
+static const unsigned char epk[] = "-----END PRIVATE KEY-----";
+static const unsigned char bpubk[] = "-----BEGIN PUBLIC KEY-----";
+static const unsigned char epubk[] = "-----END PUBLIC KEY-----";
 
 #define READ_BD_FROM_STACK(n)     n = stReadBD(st,&error);     \
     if ((n == NULL) || (error != 0))                           \
@@ -51,10 +51,10 @@ static unsigned char *clear_rsa_private_info(const unsigned char *string,
 	unsigned char *begin, *end;
 	size_t i;
 
-	if ((begin = (unsigned char *)strstr((char *)string, brpk)) == NULL)
+	if ((begin = (unsigned char *)strstr((char *)string,(char *)brpk)) == NULL)
 		return NULL;
 
-	begin += strlen(brpk);
+	begin += strlen((char *)brpk);
 	while (*begin == '\n')
 		begin++;
 
@@ -68,7 +68,7 @@ static unsigned char *clear_rsa_private_info(const unsigned char *string,
 		return NULL;
 	begin += 22;
 
-	if ((end = (unsigned char *)strstr((char *)begin, erpk)) == NULL)
+	if ((end = (unsigned char *)strstr((char *)begin,(char *)erpk)) == NULL)
 		return NULL;
 	*end = '\0';
 
@@ -176,14 +176,14 @@ uint8_t bdWritePrivateRSAKeyToFile(const char *filename, PrivateRSAKey rsa)
 		goto final;
 
 	size_t t;
-	t = strlen(bpk);
+	t = strlen((char *)bpk);
 	if (write(fd, bpk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
 		WRITEERROR;
 	if (write(fd, b64data, outlen) != outlen)
 		WRITEERROR;
-	t = strlen(epk);
+	t = strlen((char *)epk);
 	if (write(fd, epk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
@@ -226,7 +226,7 @@ uint8_t bdWriteEncryptedPrivateRSAKeyToFile(const char *filename,
 		  S_IRUSR | S_IWUSR)) < 0)
 		goto final;
 
-	t = strlen(brpk);
+	t = strlen((char *)brpk);
 	if (write(fd, brpk, t) != t)
 		WRITEERROR;
 	t = strlen(enc);
@@ -239,7 +239,7 @@ uint8_t bdWriteEncryptedPrivateRSAKeyToFile(const char *filename,
 		WRITEERROR;
 	if (write(fd, st->data, st->used) != st->used)
 		WRITEERROR;
-	t = strlen(erpk);
+	t = strlen((char *)erpk);
 	if (write(fd, erpk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
@@ -552,14 +552,14 @@ uint8_t bdWritePublicRSAKeyToFile(const char *filename, PublicRSAKey rsa)
 		goto final;
 
 	size_t t;
-	t = strlen(bpubk);
+	t = strlen((char *)bpubk);
 	if (write(fd, bpubk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
 		WRITEERROR;
 	if (write(fd, b64data, outlen) != outlen)
 		WRITEERROR;
-	t = strlen(epubk);
+	t = strlen((char *)epubk);
 	if (write(fd, epubk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
@@ -585,8 +585,8 @@ int generatePairRSAKeys(int bits, char *filename, int aes)
 
 	if ((rsa = genRSAPrivateKey(bits)) == NULL)
 		goto final;
-
-	make_vector(p, strlen(filename) + 5);
+	if((p = (char *)calloc(strlen(filename) + 5,sizeof(char))) == NULL)
+			goto final;
 	sprintf(p, "%s.pub",filename);
 	if (!bdWritePublicRSAKeyToFile(p, rsa->pub))
 		goto final;
@@ -614,7 +614,7 @@ int generatePairRSAKeys(int bits, char *filename, int aes)
 
 final:
 	freePrivateRSAKey(rsa);
-	free_vector(p);
+	freeString(p);
 	return ret;
 }
 

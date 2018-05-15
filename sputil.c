@@ -511,11 +511,11 @@ unsigned char *clearCcommentsInText(unsigned char *string,const unsigned char *b
 	unsigned char *p, *q;
 
 	p = q = NULL;
-	if ((p = (unsigned char *)strstr((char *)string,begin)) != NULL) {
+	if ((p = (unsigned char *)strstr((char *)string,(char *)begin)) != NULL) {
 		p += strlen((char *)begin);
 		while (*p == '\n')
 			p++;
-		if ((q = (unsigned char *)strstr((char *)p,end)) == NULL)
+		if ((q = (unsigned char *)strstr((char *)p,(char *)end)) == NULL)
 			return NULL;
 		*q = '\0';
 		return p;

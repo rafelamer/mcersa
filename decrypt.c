@@ -84,8 +84,7 @@ BD privateDecryptOAEPRSA(PrivateRSAKey rsa, BD c)
 
 	size = spBytesInBD(rsa->pub->n) - 2 * hLen - 3;
 	sizeEM = spBytesInBD(rsa->pub->n) - 1;
-	if ((EM =
-	     (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
+	if ((EM = (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
 		goto final;
 
 	dg = (unsigned char *)(p->digits);

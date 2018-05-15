@@ -61,8 +61,7 @@ BD publicEncryptOAEPRSA(PublicRSAKey rsa, BD m)
 	memcpy(hash, dg, nbytes);
 
 	sizeEM = size + 2 * hLen + 2;
-	if ((EM =
-	     (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
+	if ((EM = (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
 		goto final;
 
 	if (oaep_encode(hash, size, sizeEM, LABEL_CLIENT, EM) < 0)
@@ -81,7 +80,7 @@ BD publicEncryptOAEPRSA(PublicRSAKey rsa, BD m)
 final:
 	freeString(hash);
 	freeBD(p);
-
+	freeString(EM);
 	return c;
 }
 

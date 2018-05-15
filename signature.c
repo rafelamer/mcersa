@@ -30,8 +30,8 @@
 #include <sha2.h>
 #include <array.h>
 
-static const char bsigf[] = "-----BEGIN RSA SIGNED FILE-----";
-static const char esigf[] = "-----END RSA SIGNED FILE-----";
+static const unsigned char bsigf[] = "-----BEGIN RSA SIGNED FILE-----";
+static const unsigned char esigf[] = "-----END RSA SIGNED FILE-----";
 
 #define WRITEERROR {                    \
 		close(fd);								 				  \

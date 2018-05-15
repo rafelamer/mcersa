@@ -36,10 +36,10 @@
 		goto final;													\
 	}
 
-static const char baesf[] = "-----BEGIN AES ENCRYPTED FILE-----";
-static const char eaesf[] = "-----END AES ENCRYPTED FILE-----";
-static const char brsaf[] = "-----BEGIN RSA ENCRYPTED FILE-----";
-static const char ersaf[] = "-----END RSA ENCRYPTED FILE-----";
+static const unsigned char baesf[] = "-----BEGIN AES ENCRYPTED FILE-----";
+static const unsigned char eaesf[] = "-----END AES ENCRYPTED FILE-----";
+static const unsigned char brsaf[] = "-----BEGIN RSA ENCRYPTED FILE-----";
+static const unsigned char ersaf[] = "-----END RSA ENCRYPTED FILE-----";
 
 int encryptFileWithAES(char *infile, char **outfile, int ascii)
 {
@@ -54,7 +54,8 @@ int encryptFileWithAES(char *infile, char **outfile, int ascii)
 	ret = ENCRYPTION_ERROR;
 	if (*outfile == NULL)
 	{
-		make_vector(*outfile, strlen(infile) + 8);
+		if((*outfile = (char *)calloc(strlen(infile) + 8,sizeof(char))) == NULL)
+			goto final;
 		if (ascii)
 			sprintf(*outfile, "%s.asc", infile);
 		else
@@ -101,14 +102,14 @@ int encryptFileWithAES(char *infile, char **outfile, int ascii)
 	if (ascii)
 	{
 		size_t t;
-		t = strlen(baesf);
+		t = strlen((char *)baesf);
 		if (write(fd, baesf, t) != t)
 			WRITEERROR;
 		if (write(fd, "\n", 1) != 1)
 			WRITEERROR;
 		if (write(fd, st->data, st->used) != st->used)
 			WRITEERROR;
-		t = strlen(eaesf);
+		t = strlen((char *)eaesf);
 		if (write(fd, eaesf, t) != t)
 			WRITEERROR;
 		if (write(fd, "\n", 1) != 1)
@@ -206,7 +207,8 @@ int encryptFileWithRSA(char *infile, char **outfile, char *keyfile, int ascii)
 	ret = ENCRYPTION_ERROR;
 	if (*outfile == NULL)
 	{
-		make_vector(*outfile, strlen(infile) + 8);
+		if((*outfile = (char *)calloc(strlen(infile) + 8,sizeof(char))) == NULL)
+			goto final;
 		if (ascii)
 			sprintf(*outfile, "%s.asc", infile);
 		else
@@ -255,14 +257,14 @@ int encryptFileWithRSA(char *infile, char **outfile, char *keyfile, int ascii)
 	}
 	if (ascii) {
 		size_t t;
-		t = strlen(brsaf);
+		t = strlen((char *)brsaf);
 		if (write(fd, brsaf, t) != t)
 			WRITEERROR;
 		if (write(fd, "\n", 1) != 1)
 			WRITEERROR;
 		if (write(fd, st->data, st->used) != st->used)
 			WRITEERROR;
-		t = strlen(ersaf);
+		t = strlen((char *)ersaf);
 		if (write(fd, ersaf, t) != t)
 			WRITEERROR;
 		if (write(fd, "\n", 1) != 1)

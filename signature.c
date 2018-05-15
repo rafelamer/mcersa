@@ -278,14 +278,14 @@ int signFileWithRSA(char *infile, char **outfile, char *keyfile, int ascii)
 	if (ascii)
 	{
 		size_t t;
-		t = strlen(bsigf);
+		t = strlen((char *)bsigf);
 		if (write(fd, bsigf, t) != t)
 			WRITEERROR;
 		if (write(fd, "\n", 1) != 1)
 			WRITEERROR;
 		if (write(fd, st->data, st->used) != st->used)
 			WRITEERROR;
-		t = strlen(esigf);
+		t = strlen((char *)esigf);
 		if (write(fd, esigf, t) != t)
 			WRITEERROR;
 		if (write(fd, "\n", 1) != 1)

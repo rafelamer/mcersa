@@ -47,7 +47,8 @@ BD spInitBD()
 	BD n;
 	if ((n = (BD) malloc(sizeof(big_digit))) == NULL)
 		return NULL;
-	make_vector(n->digits, ALLOCSIZE);
+	if ((n->digits = (digit *)calloc(ALLOCSIZE,sizeof(digit))) == NULL)
+		return NULL;
 	n->used = 0;
 	n->alloc = ALLOCSIZE;
 	n->sign = 1;
@@ -69,7 +70,8 @@ BD spInitWithAllocBD(size_t alloc)
 	BD n;
 	if ((n = (BD) malloc(sizeof(big_digit))) == NULL)
 		return NULL;
-	make_vector(n->digits, alloc);
+	if ((n->digits = (digit *)calloc(alloc,sizeof(digit))) == NULL)
+		return NULL;
 	n->used = 0;
 	n->alloc = alloc;
 	n->sign = 1;

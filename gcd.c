@@ -186,6 +186,7 @@ BD bdExtendedGCDOfBD(BD n1, BD n2, BD * x, BD * y)
 		t1 = bdMultiplyBD(q, lx);
 		t2 = bdSubtractBD(*x, t1);
 		freeBD(t1);
+		freeBD(*x);
 		*x = lx;
 		lx = t2;
 		/*
@@ -194,6 +195,7 @@ BD bdExtendedGCDOfBD(BD n1, BD n2, BD * x, BD * y)
 		t1 = bdMultiplyBD(q, ly);
 		t2 = bdSubtractBD(*y, t1);
 		freeBD(t1);
+		freeBD(*y);
 		*y = ly;
 		ly = t2;
 

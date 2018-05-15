@@ -221,7 +221,8 @@ int signFileWithRSA(char *infile, char **outfile, char *keyfile, int ascii)
 	ret = ENCRYPTION_ERROR;
 	if (*outfile == NULL)
 	{
-		make_vector(*outfile, strlen(infile) + 12);
+		if((*outfile = (char *)calloc(strlen(infile) + 12,sizeof(char))) == NULL)
+			goto final;
 		if (ascii)
 			sprintf(*outfile, "%s.sig.asc", infile);
 		else

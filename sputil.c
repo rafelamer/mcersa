@@ -105,7 +105,7 @@ void spFreeBD(BD * n)
 		if ((*n)->digits != NULL)
 		{
 			memset((void *)((*n)->digits),0,(*n)->used * BYTES_PER_DIGIT);
-			free_vector((*n)->digits);
+			free((*n)->digits);
 		}
 		free(*n);
 	}
@@ -439,8 +439,8 @@ char *getPassword(const char *text)
 	printf("%s", text);
 	alloc_size = ALLOCSIZE;
 	str_size = 0;
-	make_vector(password, alloc_size);
-
+	if ((password = (char *)calloc(alloc_size,sizeof(char))) == NULL)
+		return NULL;
 	tcgetattr(STDIN_FILENO, &oldt);
 	newt = oldt;
 	newt.c_lflag &= ~(ECHO);
@@ -451,14 +451,16 @@ char *getPassword(const char *text)
 		if (str_size == alloc_size)
 		{
 			alloc_size += ALLOCSIZE;
-			expand_vector(password, alloc_size);
+		 	if ((password = (char *)realloc(password,alloc_size * sizeof(char))) == NULL)
+				return NULL;
 		}
 		password[str_size++] = c;
 	}
 	if (str_size == alloc_size)
 	{
 		alloc_size += ALLOCSIZE;
-		expand_vector(password, 8);
+		if ((password = (char *)realloc(password,alloc_size * sizeof(char))) == NULL)
+			return NULL;
 	}
 	password[str_size] = '\0';
 	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);

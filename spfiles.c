@@ -76,7 +76,9 @@ char *spStringFromFile(const char *filename, int8_t * sign)
 	size_t alloc_size, str_size;
 	alloc_size = 256;
 	str_size = 0;
-	make_vector(str, alloc_size);
+	if ((str = (char *)calloc(alloc_size,sizeof(char))) == NULL)
+		return NULL;
+
 	while (c != EOF)
 	{
 		if (!isdigit(c))
@@ -87,7 +89,8 @@ char *spStringFromFile(const char *filename, int8_t * sign)
 		if (str_size == alloc_size)
 		{
 			alloc_size = alloc_size * 3 / 2;
-			expand_vector(str, alloc_size);
+			if ((str = (char *)realloc(str,alloc_size * sizeof(char))) == NULL)
+				return NULL;
 		}
 		str[str_size++] = c;
 		c = getc(fp);
@@ -96,7 +99,8 @@ char *spStringFromFile(const char *filename, int8_t * sign)
 	if (str_size == alloc_size)
 	{
 		alloc_size += 1;
-		expand_vector(str, alloc_size);
+		if ((str = (char *)realloc(str,alloc_size * sizeof(char))) == NULL)
+			return NULL;
 	}
 	str[str_size] = '\0';
 	return str;
@@ -133,7 +137,7 @@ BD spReadBDFromFile(const char *filename)
 	if ((s = spStringFromFile(filename, &sign)) == NULL)
 		return NULL;
 	n = spBDFromString(s, 10, sign);
-	free_vector(s);
+	freeString(s);
 	return n;
 }
 
@@ -161,7 +165,8 @@ char *spBDToString(BD n, digit base)
 
 	if (spSizeOfBD(n) == 0)
 	{
-		make_vector(s, 2);
+		if ((s = (char *)calloc(2,sizeof(char))) == NULL)
+			return NULL;
 		s[0] = '0';
 		s[1] = '\0';
 		return s;
@@ -169,27 +174,30 @@ char *spBDToString(BD n, digit base)
 	size_t allocSize = 1024;
 	size_t strSize = 0;
 
-	make_vector(s, allocSize);
+	if ((s = (char *)calloc(allocSize,sizeof(char))) == NULL)
+		return NULL;
 	if ((aux = spCopyBD(n)) == NULL)
 		return NULL;
 	while (spSizeOfBD(aux) > 0)
 	{
 		if (spDivideByDigitBD(aux, base, &r) < 0)
 		{
-			free_vector(s);
+			freeString(s);
 			return NULL;
 		}
 		if (strSize == allocSize)
 		{
 			allocSize = allocSize * 3 / 2;
-			expand_vector(s, allocSize);
+			if ((s = (char *)realloc(s,allocSize * sizeof(char))) == NULL)
+				return NULL;
 		}
 		s[strSize++] = spDigits[r];
 	}
 	if ((allocSize - strSize) < 2)
 	{
 		allocSize += 2;
-		expand_vector(s, allocSize);
+		if ((s = (char *)realloc(s,allocSize * sizeof(char))) == NULL)
+			return NULL;
 	}
 	if (n->sign == -1)
 		s[strSize++] = '-';
@@ -212,7 +220,7 @@ void spPrintDecimal(BD n)
 	char *s;
 	s = spBDToString(n, 10);
 	printf("%s\n", s);
-	free_vector(s);
+	freeString(s);
 	printf("\n");
 }
 
@@ -221,7 +229,7 @@ void spPrintBase2(BD n)
 	char *s;
 	s = spBDToString(n, 2);
 	printf("%s\n", s);
-	free_vector(s);
+	freeString(s);
 	printf("\n");
 }
 

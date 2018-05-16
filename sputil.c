@@ -120,7 +120,13 @@ BD spCopyBD(BD n)
 	m->used = n->used;
 	m->alloc = n->used;
 	m->sign = n->sign;
-	clone_vector(n->digits, m->digits, n->used);
+	if ((m->digits = (digit *)calloc(n->used,sizeof(digit))) == NULL)
+	{
+		m->digits = NULL;
+		freeBD(m);
+		return NULL;
+	}
+	memcpy(m->digits,n->digits,n->used * sizeof(digit));
 	return m;
 }
 

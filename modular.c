@@ -24,7 +24,6 @@
 ***************************************************************************************/
 #include <mcersa.h>
 #include <stdlib.h>
-#include <array.h>
 
 BD bdModularBD(BD n1, BD n2)
 /*
@@ -185,7 +184,8 @@ BD bdExponentialBD(BD n1, BD n2)
 	size_t nbit, i;
 
 	r = NULL;
-	make_vector(g, 256);
+	if((g = (BD *)calloc(256,sizeof(BD *))) == NULL)
+		goto FINAL;
 	if ((g[0] = spInitWithOneBD()) == NULL)
 		goto FINAL;
 	if ((g[1] = spCopyBD(n1)) == NULL)
@@ -262,15 +262,8 @@ BD bdExponentialBD(BD n1, BD n2)
 				{
 					nbit -= 8;
 					m = n2->digits[ndigit - 2];
-					mask =
-						~(((digit) 1 <<
-							 (BITS_PER_DIGIT -
-								(8 - i))) - 1);
-					index =
-						(index << (8 - i)) |
-						(uint8_t) ((m & mask) >>
-											 (BITS_PER_DIGIT -
-												(8 - i)));
+					mask = ~(((digit) 1 << (BITS_PER_DIGIT - (8 - i))) - 1);
+					index = (index << (8 - i)) | (uint8_t) ((m & mask) >> (BITS_PER_DIGIT - (8 - i)));
 				}
 			}
 			while ((index % 2) == 0)
@@ -303,7 +296,7 @@ FINAL:
 	n2->sign = s2;
 	for (i = 0; i < 256; i++)
 		freeBD(g[i]);
-	free_vector(g);
+	free(g);
 
 	return r;
 }
@@ -341,7 +334,8 @@ BD bdModExponentialBD(BD n1, BD n2, BD n3)
 	size_t nbit, i;
 
 	r = NULL;
-	make_vector(g, 256);
+	if((g = (BD *)calloc(256,sizeof(BD *))) == NULL)
+		goto FINAL;
 	if ((g[0] = spInitWithOneBD()) == NULL)
 		goto FINAL;
 	if ((g[1] = bdModularBD(n1, n3)) == NULL)
@@ -403,15 +397,8 @@ BD bdModExponentialBD(BD n1, BD n2, BD n3)
 				{
 					nbit -= 8;
 					m = n2->digits[ndigit - 2];
-					mask =
-						~(((digit) 1 <<
-							 (BITS_PER_DIGIT -
-								(8 - i))) - 1);
-					index =
-						(index << (8 - i)) |
-						(uint8_t) ((m & mask) >>
-											 (BITS_PER_DIGIT -
-												(8 - i)));
+					mask = ~(((digit) 1 << (BITS_PER_DIGIT - (8 - i))) - 1);
+					index = (index << (8 - i)) | (uint8_t) ((m & mask) >> (BITS_PER_DIGIT - (8 - i)));
 				}
 			}
 			while ((index % 2) == 0)
@@ -446,7 +433,7 @@ FINAL:
 	n3->sign = s3;
 	for (i = 0; i < 256; i++)
 		freeBD(g[i]);
-	free_vector(g);
+	free(g);
 
 	return r;
 }

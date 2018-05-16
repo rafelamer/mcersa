@@ -176,15 +176,15 @@ uint8_t bdWritePrivateRSAKeyToFile(const char *filename, PrivateRSAKey rsa)
 		goto final;
 
 	size_t t;
-	t = strlen((char *)bpk);
-	if (write(fd, bpk, t) != t)
+	t = strlen((char *)brpk);
+	if (write(fd, brpk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
 		WRITEERROR;
 	if (write(fd, b64data, outlen) != outlen)
 		WRITEERROR;
-	t = strlen((char *)epk);
-	if (write(fd, epk, t) != t)
+	t = strlen((char *)erpk);
+	if (write(fd, erpk, t) != t)
 		WRITEERROR;
 	if (write(fd, "\n", 1) != 1)
 		WRITEERROR;
@@ -332,10 +332,10 @@ PrivateRSAKey bdReadPrivateRSAKeyFromFile(const char *filename)
 	   Clear begin and end comments
 	 */
 
-	if ((begin = clearCcommentsInText(str,bpk,epk)) == NULL)
+	if ((begin = clearCcommentsInText(str,brpk,erpk)) == NULL)
 		goto final;
 	len = strlen((char *)begin);
-
+	
 	/*
 	   Decode the data with base64
 	   Initialize the stack and copy data

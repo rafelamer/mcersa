@@ -28,7 +28,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sha2.h>
-#include <array.h>
 
 static const unsigned char bsigf[] = "-----BEGIN RSA SIGNED FILE-----";
 static const unsigned char esigf[] = "-----END RSA SIGNED FILE-----";

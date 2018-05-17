@@ -23,8 +23,9 @@
 *	      See https://www.gnu.org/licenses/
 ***************************************************************************************/
 #include <mcersa.h>
-#include <array.h>
 #include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <aes.h>
 

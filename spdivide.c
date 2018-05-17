@@ -23,7 +23,6 @@
 *	      See https://www.gnu.org/licenses/
 ***************************************************************************************/
 #include <mcersa.h>
-#include <array.h>
 
 int spIsPowerOfTwo(digit m, size_t * power)
 /*

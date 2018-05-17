@@ -59,7 +59,8 @@ BD privateDecryptRSA(PrivateRSAKey rsa, BD c)
 		goto final;
 	if (bdMultiplyBDBy(&m, rsa->q) == 0)
 		goto final;
-	bdAddAbsoluteValueTo(m, m2);
+	if (! bdAddAbsoluteValueTo(m, m2))
+		goto final;		
 	r = 1;
 
 final:
@@ -124,10 +125,8 @@ BD publicDecryptOAEPRSA(PublicRSAKey rsa, BD c)
 
 	size = spBytesInBD(rsa->n) - 2 * hLen - 3;
 	sizeEM = spBytesInBD(rsa->n) - 1;
-	if ((EM =
-	     (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
+	if ((EM = (unsigned char *)calloc(sizeEM, sizeof(unsigned char))) == NULL)
 		goto final;
-
 	dg = (unsigned char *)(p->digits);
 	memcpy(EM, dg, sizeEM);
 
@@ -139,6 +138,7 @@ BD publicDecryptOAEPRSA(PublicRSAKey rsa, BD c)
 	while (*dg-- == 0x00)
 		nbytes--;
 	used = (nbytes + BYTES_PER_DIGIT - 1) / BYTES_PER_DIGIT;
+
 	if ((m = spInitWithAllocBD(used)) == NULL)
 		goto final;
 

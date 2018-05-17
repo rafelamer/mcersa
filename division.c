@@ -98,8 +98,10 @@ BD bdDivideSimpleBD(BD n1, BD n2, BD * q)
 	if (norm < (BITS_PER_DIGIT - 1))
 	{
 		norm = BITS_PER_DIGIT - 1 - norm;
-		spMultiplyByPowerOfTwo(x, norm);
-		spMultiplyByPowerOfTwo(y, norm);
+		if (! spMultiplyByPowerOfTwo(x, norm))
+			goto ERRORINIT;
+		if (! spMultiplyByPowerOfTwo(y, norm))
+			goto ERRORINIT;
 	} else
 	{
 		norm = 0;
@@ -107,7 +109,8 @@ BD bdDivideSimpleBD(BD n1, BD n2, BD * q)
 
 	n = x->used - 1;
 	t = y->used - 1;
-	spShiftToLeftNumberOfDigits(y, n - t);
+	if (! spShiftToLeftNumberOfDigits(y, n - t))
+		goto ERRORINIT;
 
 	while (spCompareAbsoluteValues(x, y) != -1)
 	{
@@ -141,7 +144,8 @@ BD bdDivideSimpleBD(BD n1, BD n2, BD * q)
 			t1->digits[0] = (t == 0) ? 0 : y->digits[t - 1];
 			t1->digits[1] = y->digits[t];
 			t1->used = 2;
-			spMultiplyByDigitBD(t1, (*q)->digits[k]);
+			if (! spMultiplyByDigitBD(t1, (*q)->digits[k]))
+				goto ERRORINIT;
 			t2->digits[0] = (i < 2) ? 0 : x->digits[i - 2];
 			t2->digits[1] = (i < 1) ? 0 : x->digits[i - 1];
 			t2->digits[2] = x->digits[i];
@@ -149,18 +153,26 @@ BD bdDivideSimpleBD(BD n1, BD n2, BD * q)
 		}
 		while (spCompareAbsoluteValues(t1, t2) == 1);
 
-		spCopyDigits(y, t1);
-		spMultiplyByDigitBD(t1, (*q)->digits[k]);
-		spShiftToLeftNumberOfDigits(t1, k);
+		if (! spCopyDigits(y, t1))
+			goto ERRORINIT;
+		if (! spMultiplyByDigitBD(t1, (*q)->digits[k]))
+			goto ERRORINIT;
+		if (! spShiftToLeftNumberOfDigits(t1, k))
+			goto ERRORINIT;
 		t3 = bdSubtractBD(x, t1);
-		spCopyDigits(t3, x);
+		if (! spCopyDigits(t3, x))
+			goto ERRORINIT;
 		freeBD(t3);
 		if (x->sign == -1)
 		{
-			spCopyDigits(y, t1);
-			spShiftToLeftNumberOfDigits(t1, k);
-			t3 = bdAddBD(x, t1);
-			spCopyDigits(t3, x);
+			if (! spCopyDigits(y, t1))
+				goto ERRORINIT;
+			if (! spShiftToLeftNumberOfDigits(t1, k))
+				goto ERRORINIT;
+			if ((t3 = bdAddBD(x, t1)) == NULL)
+				goto ERRORINIT;
+			if (! spCopyDigits(t3, x))
+				goto ERRORINIT;
 			freeBD(t3);
 		}
 	}
@@ -173,11 +185,13 @@ BD bdDivideSimpleBD(BD n1, BD n2, BD * q)
 	} else
 	{
 		(*q)->sign = -1;
-		spAddDigitToBD(*q, 1, 0);
+		if (! spAddDigitToBD(*q, 1, 0))
+			goto ERRORINIT;
 		(*q)->used = spSizeOfBD(*q);
 		t1 = spCopyBD(n2);
 		bdSubtractAbsoluteValuesTo(t1, x);
-		spCopyDigits(t1, x);
+		if (! spCopyDigits(t1, x))
+			goto ERRORINIT;
 		freeBD(t1);
 		x->sign = (x->used == 0) ? 1 : n2->sign;
 	}

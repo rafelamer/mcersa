@@ -90,7 +90,8 @@ BD bdGCDOfBD(BD n1, BD n2)
 		v = r;
 	}
 	freeBD(v);
-	spMultiplyByPowerOfTwo(u, l);
+	if (! spMultiplyByPowerOfTwo(u, l))
+		goto ERRORCOPY;
 	return u;
 
 ERRORCOPY:
@@ -198,13 +199,13 @@ BD bdExtendedGCDOfBD(BD n1, BD n2, BD * x, BD * y)
 		freeBD(*y);
 		*y = ly;
 		ly = t2;
-
 		freeBD(q);
 	}
 	freeBD(lx);
 	freeBD(ly);
 	freeBD(v);
-	spMultiplyByPowerOfTwo(u, l);
+	if (! spMultiplyByPowerOfTwo(u, l))
+		goto ERRORCOPYINIT;
 	if (exch == 1)
 	{
 		BD t;

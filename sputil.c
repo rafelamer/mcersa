@@ -23,8 +23,8 @@
  *	      See https://www.gnu.org/licenses/
  ***************************************************************************************/
 #include <mcersa.h>
-#include <array.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
@@ -84,18 +84,22 @@ void spSetZeroBD(BD n)
 	n->used = 0;
 }
 
-void spAugmentDB(BD n)
+uint8_t spAugmentDB(BD n)
 {
-	expand_vector(n->digits, n->alloc + ALLOCSIZE);
+	if ((n->digits = (digit *)realloc(n->digits,(n->alloc + ALLOCSIZE) * sizeof(digit))) == NULL)
+		return 0;
 	memset(n->digits + n->alloc, 0, ALLOCSIZE * sizeof(digit));
 	n->alloc += ALLOCSIZE;
+	return 1;
 }
 
-void spAugmentInSizeDB(BD n, size_t ndigits)
+uint8_t spAugmentInSizeDB(BD n, size_t ndigits)
 {
-	expand_vector(n->digits, n->alloc + ndigits);
+	if ((n->digits = (digit *)realloc(n->digits,(n->alloc + ndigits) * sizeof(digit))) == NULL)
+		return 0;	
 	memset(n->digits + n->alloc, 0, ndigits * sizeof(digit));
 	n->alloc += ndigits;
+	return 1;
 }
 
 void spFreeBD(BD * n)
@@ -130,14 +134,16 @@ BD spCopyBD(BD n)
 	return m;
 }
 
-void spCopyDigits(BD n, BD m)
+uint8_t spCopyDigits(BD n, BD m)
 {
 	size_t i;
 	if (m->alloc < n->used)
-		spAugmentInSizeDB(m, n->used - m->alloc);
+		if (! spAugmentInSizeDB(m, n->used - m->alloc))
+			return 0;
 	m->used = n->used;
 	for (i = 0; i < n->used; i++)
 		m->digits[i] = n->digits[i];
+	return 1;
 }
 
 size_t spSizeOfBD(BD n)
@@ -288,7 +294,7 @@ digit spSubtractTo(digit * n, digit n1, digit carry)
 	return t;
 }
 
-void spAddDigitToBD(BD n, digit m, size_t pos)
+uint8_t spAddDigitToBD(BD n, digit m, size_t pos)
 /*
   Computes n = n + m*B^pos
   If necessary expands n
@@ -297,9 +303,10 @@ void spAddDigitToBD(BD n, digit m, size_t pos)
 	digit t = 0;
 	size_t i = pos;
 	if (m == 0)
-		return;
+		return 1;
 	while (pos >= n->alloc)
-		spAugmentDB(n);
+		if (! spAugmentDB(n))
+			return 0;
 	if (n->used < pos + 1)
 		n->used = pos + 1;
 
@@ -308,11 +315,13 @@ void spAddDigitToBD(BD n, digit m, size_t pos)
 	{
 		i++;
 		if (i > n->alloc)
-			spAugmentDB(n);
+			if (! spAugmentDB(n))
+				return 0;
 		if (i > n->used)
 			n->used++;
 		t = spAddTo(n->digits + i, 0, t);
 	}
+	return 1;
 }
 
 void spSubtractDigitToBD(BD n, digit m)

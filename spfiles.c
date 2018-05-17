@@ -23,9 +23,9 @@
 *	      See https://www.gnu.org/licenses/
 ***************************************************************************************/
 #include <mcersa.h>
-#include <array.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <string.h>
 #include <stdlib.h>
 #include <fcntl.h>
 
@@ -111,10 +111,11 @@ BD spBDFromString(const char *s, int8_t base, int8_t sign)
 	BD n;
 	size_t i;
 	digit j;
-	size_t nchars = strlen(s);
+	size_t nchars;
 
+	nchars = strlen(s);
 	if ((n = spInitBD()) == NULL)
-		return NULL;
+		goto final;
 
 	n->sign = sign;
 	for (i = 0; i < nchars; i++)
@@ -123,10 +124,16 @@ BD spBDFromString(const char *s, int8_t base, int8_t sign)
 		for (j = 0; j < base; j++)
 			if (spDigits[j] == ch)
 				break;
-		spMultiplyByDigitBD(n, base);
-		spAddDigitToBD(n, j, 0);
+		if (! spMultiplyByDigitBD(n, base))
+			goto final;
+		if (! spAddDigitToBD(n, j, 0))
+			goto final;
 	}
 	return n;
+
+final:
+	freeBD(n);
+	return NULL;
 }
 
 BD spReadBDFromFile(const char *filename)

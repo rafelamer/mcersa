@@ -23,9 +23,9 @@
 *	      See https://www.gnu.org/licenses/
 ***************************************************************************************/
 #include <mcersa.h>
-#include <array.h>
+#include <string.h>
 
-void spMultiplyByDigitBD(BD n, digit m)
+uint8_t  spMultiplyByDigitBD(BD n, digit m)
 /*
   Computes n = n * m
   If necessary expands n
@@ -38,7 +38,7 @@ void spMultiplyByDigitBD(BD n, digit m)
 	if (m == 0)
 	{
 		spSetZeroBD(n);
-		return;
+		return 1;
 	}
 	while (i < d)
 	{
@@ -48,23 +48,27 @@ void spMultiplyByDigitBD(BD n, digit m)
 		i++;
 	}
 	if (t == 0)
-		return;
+		return 1;
 	if (n->used == n->alloc)
-		spAugmentDB(n);
+		if (! spAugmentDB(n))
+			return 0;
 	n->digits[d] = t;
 	n->used++;
+	return 1;
 }
 
-void spShiftToLeftNumberOfDigits(BD n, digit ndigits)
+uint8_t spShiftToLeftNumberOfDigits(BD n, digit ndigits)
 {
 	if ((n->alloc - n->used) < ndigits)
-		spAugmentInSizeDB(n, ndigits - (n->alloc - n->used));
+		if (! spAugmentInSizeDB(n, ndigits - (n->alloc - n->used)))
+			return 0;
 	memmove(n->digits + ndigits, n->digits, n->used * sizeof(digit));
 	memset(n->digits, 0, ndigits * sizeof(digit));
 	n->used += ndigits;
+	return 1;
 }
 
-void spMultiplyByPowerOfTwo(BD n, digit power)
+uint8_t spMultiplyByPowerOfTwo(BD n, digit power)
 /*
   Shift to the left a certain number of bits.
 */
@@ -72,14 +76,15 @@ void spMultiplyByPowerOfTwo(BD n, digit power)
 	size_t newSize, m, i;
 
 	if ((power == 0) || (spSizeOfBD(n) == 0))
-		return;
+		return 1;
 
 	/*
 		Compute the new size and alloc space for it
 	*/
 	newSize = (spBitsInBD(n) + power + BITS_PER_DIGIT - 1) / BITS_PER_DIGIT;
 	if (newSize > n->alloc)
-		spAugmentInSizeDB(n, newSize - n->alloc);
+		if (! spAugmentInSizeDB(n, newSize - n->alloc))
+			return 0;
 	/*
 		If power is 158 and BITS_PER_DIGIT is 32, 178 / 32 = 5
 		we first shifts letf 5 digits
@@ -87,14 +92,15 @@ void spMultiplyByPowerOfTwo(BD n, digit power)
 	if (power >= BITS_PER_DIGIT)
 	{
 		m = power / BITS_PER_DIGIT;
-		spShiftToLeftNumberOfDigits(n, m);
+		if (! spShiftToLeftNumberOfDigits(n, m))
+			return 0;
 	}
 	/*
 		The remainder 18  bits
 	*/
 	m = power % BITS_PER_DIGIT;
 	if (m == 0)
-		return;
+		return 1;
 
 	digit mask, shift, r0, r1;
 	digit *aux;
@@ -122,4 +128,5 @@ void spMultiplyByPowerOfTwo(BD n, digit power)
 	if (r0 > 0)
 		n->digits[n->used++] = r0;
 	n->used = spSizeOfBD(n);
+	return 1;
 }

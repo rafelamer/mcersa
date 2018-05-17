@@ -44,6 +44,7 @@ int main(int argc, char **argv)
  final:
 	freeBD(m);
 	freeBD(c);
+	freeBD(n);
 	freePrivateRSAKey(r1);
 	if (ret == EXIT_FAILURE)
 		printf("Error reading the RSA key, encrypting or decrypting\n");

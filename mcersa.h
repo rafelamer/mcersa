@@ -109,15 +109,15 @@ BD spAllocBD();
 BD spInitBD();
 BD spInitWithOneBD();
 BD spInitWithAllocBD(size_t alloc);
-void spAugmentDB(BD n);
-void spAugmentInSizeDB(BD n, size_t ndigits);
+uint8_t spAugmentDB(BD n);
+uint8_t spAugmentInSizeDB(BD n, size_t ndigits);
 void spFreeBD(BD * n);
 void spFreeString(char **s);
 void spFreeZeroData(char **s,size_t length);
 char *getPassword(const char *text);
 char *getAndVerifyPassphrase();
 BD spCopyBD(BD n);
-void spCopyDigits(BD n, BD m);
+uint8_t spCopyDigits(BD n, BD m);
 void spSetZeroBD(BD n);
 size_t spSizeOfBD(BD n);
 size_t spBitsInBD(BD n);
@@ -144,16 +144,16 @@ void spPrintByte(unsigned char b, char *text);
   Operations with big digits and single digits
   Operates on the absolute value of BD's
  */
-void spAddDigitToBD(BD n, digit m, size_t pos);
+uint8_t spAddDigitToBD(BD n, digit m, size_t pos);
 void spSubtractDigitToBD(BD n, digit m);
-void spMultiplyByDigitBD(BD n, digit m);
+uint8_t spMultiplyByDigitBD(BD n, digit m);
 BD spModulusByPowerOfTwo(BD n, digit power);
 void spShiftToRightNumberOfDigits(BD n, digit ndigits);
 void spShiftToRightNumberOfBits(BD n, digit nbits);
 int spDivideByDigitBD(BD n, digit m, digit * r);
 BD spDivideByPowerOfTwo(BD n, digit power);
-void spMultiplyByPowerOfTwo(BD n, digit power);
-void spShiftToLeftNumberOfDigits(BD n, digit ndigits);
+uint8_t spMultiplyByPowerOfTwo(BD n, digit power);
+uint8_t spShiftToLeftNumberOfDigits(BD n, digit ndigits);
 BD spInitWithIntegerBD(signeddigit m);
 /*
   Operations with strings and files
@@ -177,7 +177,7 @@ int bdCompareAbsoluteValues(BD n1, BD n2);
 BD bdAddAbsoluteValues(BD n1, BD n2);
 BD bdSubtractAbsoluteValues(BD n1, BD n2, int8_t * sign);
 void bdSubtractAbsoluteValuesTo(BD n1, BD n2);
-void bdAddAbsoluteValueTo(BD n1, BD n2);
+uint8_t bdAddAbsoluteValueTo(BD n1, BD n2);
 BD bdAddBD(BD n1, BD n2);
 int bdAddUnsignedTo(BD n, BD z, size_t pos);
 /*

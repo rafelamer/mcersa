@@ -102,7 +102,10 @@ PrivateRSAKey genRSAPrivateKey(size_t bits)
 		if (error == 0)
 			break;
 		if (error == -1)
-			spAddDigitToBD(ek, (digit) 1, 0);
+		{
+			if (! spAddDigitToBD(ek, (digit) 1, 0))
+				goto errorRSA;
+		}
 		else
 			goto errorRSA;
 	}

@@ -80,7 +80,11 @@ BD bdAddAbsoluteValues(BD n1, BD n2)
 	while (t > 0)
 	{
 		if (n->used == n->alloc)
-			spAugmentDB(n);
+			if (! spAugmentDB(n))
+			{
+				freeBD(n);
+				return NULL;
+			}
 		t = spAddTo(n->digits + i, 0, t);
 		i++;
 		if (i > n->used)
@@ -89,7 +93,7 @@ BD bdAddAbsoluteValues(BD n1, BD n2)
 	return n;
 }
 
-void bdAddAbsoluteValueTo(BD n1, BD n2)
+uint8_t bdAddAbsoluteValueTo(BD n1, BD n2)
 /*
   The algorithm uses the absolute values of n1 and n2
 	
@@ -99,7 +103,8 @@ void bdAddAbsoluteValueTo(BD n1, BD n2)
 	size_t i;
 	digit t;
 	if (n1->used == n1->alloc)
-		spAugmentInSizeDB(n1, ALLOCSIZE);
+		if (!spAugmentInSizeDB(n1, ALLOCSIZE))
+			return 0;
 	t = 0;
 	for (i = 0; i < n2->used; i++)
 		t = spAddTo(n1->digits + i, n2->digits[i], t);
@@ -110,6 +115,7 @@ void bdAddAbsoluteValueTo(BD n1, BD n2)
 		if (i > n1->used)
 			n1->used = i;
 	}
+	return 1;
 }
 
 BD bdSubtractAbsoluteValues(BD n1, BD n2, int8_t * sign)

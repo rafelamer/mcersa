@@ -176,7 +176,11 @@ BD bdRandomPrime(size_t bits)
 	n->digits[0] |= (digit) 1;
 	n->digits[n->used - 1] |= HIBITMASK;
 	while (!spIsProbablePrime(n, 20))
-		spAddDigitToBD(n, (digit) 2, 0);
+		if (! spAddDigitToBD(n, (digit) 2, 0))
+		{
+			freeBD(n);
+			return NULL;
+		}
 	return n;
 }
 
@@ -207,15 +211,18 @@ BD bdStrongRandomPrime(size_t bits)
 	*/
 	if ((i = spInitWithIntegerBD(0x8000)) == NULL)
 		goto final;
-	spMultiplyByPowerOfTwo(t, 1);	// t = 2 * t
+	if (! spMultiplyByPowerOfTwo(t, 1))	// t = 2 * t
+		goto final;
 	if ((r = bdMultiplyBD(i, t)) == NULL)	// r = i * t
 		goto final;
-	spAddDigitToBD(r, (digit) 1, 0);	// r = r + 1 
+	if (! spAddDigitToBD(r, (digit) 1, 0))	// r = r + 1
+		goto final;
 	for (;;)
 	{
 		if (spIsProbablePrime(r, 20))
 			break;
-		bdAddAbsoluteValueTo(r, t);
+		if (! bdAddAbsoluteValueTo(r, t))
+			goto final;
 	}
 	/*
 		Step 3
@@ -230,7 +237,8 @@ BD bdStrongRandomPrime(size_t bits)
 	p = a;			// p = a
 	if (!bdMultiplyBDBy(&p, s))	// p = p * s
 		goto final;
-	spMultiplyByPowerOfTwo(p, 1);	// p = 2 * p
+	if (! spMultiplyByPowerOfTwo(p, 1))	// p = 2 * p
+		goto final;	
 	spSubtractDigitToBD(p, (digit) 1);	// p = p -1
 	/*
 		Step 4
@@ -241,12 +249,14 @@ BD bdStrongRandomPrime(size_t bits)
 	freeBD(i);
 	if ((i = spInitWithIntegerBD(0x8000)) == NULL)
 		goto final;
-	spMultiplyByPowerOfTwo(r, 1);	// r = 2 * r
+	if (! spMultiplyByPowerOfTwo(r, 1))	// r = 2 * r
+		goto final;
 	if (!bdMultiplyBDBy(&r, s))	// r = r * s
 		goto final;
 	if (!bdMultiplyBDBy(&i, r))	// i = r * i 
 		goto final;
-	bdAddAbsoluteValueTo(p, i);	// p = p + i
+	if (! bdAddAbsoluteValueTo(p, i))	// p = p + i
+		goto final;
 	for (;;)
 	{
 		if (spIsProbablePrime(p, 20))
@@ -257,7 +267,8 @@ BD bdStrongRandomPrime(size_t bits)
 			freeBD(i);
 			return p;
 		}
-		bdAddAbsoluteValueTo(p, r);
+		if (! bdAddAbsoluteValueTo(p, r))
+			goto final;
 	}
 
 final:

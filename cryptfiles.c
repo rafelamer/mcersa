@@ -27,7 +27,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <array.h>
 
 #define WRITEERROR {                    \
 		close(fd);								 				  \

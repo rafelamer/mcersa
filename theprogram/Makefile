@@ -16,4 +16,4 @@ cmdline.c: cmdline.ggo
 all: $(TARGET)
 
 clean:
-	rm -f $(OBJECTS) cmdline.c cmdline.h $(TARGET)
+	rm -f $(OBJECTS) $(TARGET)

@@ -14,7 +14,7 @@
 /*************************** HEADER FILES ***************************/
 #include <stdio.h>
 #include <string.h>
-#include <mce/sha256.h>
+#include <mce/sha2.h>
 
 /*********************** FUNCTION DEFINITIONS ***********************/
 int sha256_test()

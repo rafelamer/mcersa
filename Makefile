@@ -1,4 +1,5 @@
 OS = $(shell sh -c 'uname -s 2>/dev/null || echo not')
+CFLAGS = -g -I. -O3
 ifeq ($(OS),Minix)
 CC = clang
 else

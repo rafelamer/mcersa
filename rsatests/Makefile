@@ -1,11 +1,11 @@
 OS = $(shell sh -c 'uname -s 2>/dev/null || echo not')
 ifeq ($(OS),Minix)
 CC = clang
- = -g -I. -I/usr/local/include
+CFLAGS = -g -I. -I/usr/local/include
 LIBS = -L/usr/local/lib -lmcersa -lz
 else
 CC = gcc
- = -g -I.
+CFLAGS = -g -I.
 LIBS = -lmcersa -lz
 endif
 

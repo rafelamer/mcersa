@@ -14,7 +14,7 @@ sha2.o tiger.o sboxes.o oaep.o spcrypt.o pkcs5_pbkdf2.o cryptaes.o \
 signature.o cryptfiles.o
 
 INCLUDES = mcersa.h aes.h des.h md5.h sha1.h arcfour.h blowfish.h \
-md2.h rot-13.h tiger.h oaep.h sha2.h
+md2.h rot-13.h tiger.h oaep.h sha2.h sha256.h
 
 ifeq ($(OS),Darwin)
 TARGET = libmcersa.dylib

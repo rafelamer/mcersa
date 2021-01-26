@@ -4,8 +4,13 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifndef KEK_KEY_LEN
 #define KEK_KEY_LEN 384
+#endif
+
+#ifndef ITERATION
 #define ITERATION 10
+#endif
 
 int main(int argc, char *argv[])
 {

@@ -18,5 +18,5 @@ option "show"       w "Shows a public or private RSA key" flag off dependon="key
 option "noaes"      n "Saves the RSA private key unencrypted" flag off dependon="genkey"
 option "encryptkey" c "Encrypts an RSA private key" flag off
 option "decryptkey" r "Decrypts an RSA private key" flag off
-option "sign"		    s "Signs a file" flag off
+option "sign"		s "Signs a file" flag off
 option "verify"     v "Verify and extract a signed file" flag off

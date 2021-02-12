@@ -435,7 +435,7 @@ int main(int argc, char **argv)
 			freePrivateRSAKey(rsa);
 			goto final;
 		}
-		if ((rsa = bdReadEncryptedPrivateRSAKeyFromFile(infile)) != NULL) {
+		if ((rsa = bdReadEncryptedPrivateRSAKeyFromFile(keyfile)) != NULL) {
 			printf("The contents of the private RSA key are\n");
 			spPrintRSAPrivateKey(rsa);
 			freePrivateRSAKey(rsa);

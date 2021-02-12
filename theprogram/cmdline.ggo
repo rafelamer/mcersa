@@ -11,11 +11,12 @@ option "outfile"    o "Name of the encrypted or the signed file" optional string
 option "encrypt"    e "Encrypts a file" flag off
 option "decrypt"    d "Decrypts a file" flag off
 option "genkey"     g "Generates a pair of RSA keys" flag off
-option "bits"       b "Bits of the generated RSA key" default="2048" dependon="genkey" optional int 
+option "bits"       b "Bits of the generated RSA key" default="2048" dependon="genkey" optional int
 option "ascii"      a "Writes the output file in ASCII format" flag off
 option "keyfile"    k "File of the public or private RSA key" optional string
+option "show"       w "Shows a public or private RSA key" flag off dependon="keyfile"
 option "noaes"      n "Saves the RSA private key unencrypted" flag off dependon="genkey"
 option "encryptkey" c "Encrypts an RSA private key" flag off
 option "decryptkey" r "Decrypts an RSA private key" flag off
-option "sign"		s "Signs a file" flag off
+option "sign"		    s "Signs a file" flag off
 option "verify"     v "Verify and extract a signed file" flag off

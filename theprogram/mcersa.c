@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 			goto final;
 		}
 		if (ai.decrypt_flag || ai.bits_given || ai.genkey_flag ||
-			ai.sign_flag || ai.verify_flag) {
+			ai.sign_flag || ai.verify_flag || ai.show_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
 		}
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
 		}
 
 		if (ai.encrypt_flag || ai.bits_given || ai.genkey_flag ||
-			ai.sign_flag || ai.verify_flag) {
+			ai.sign_flag || ai.verify_flag || ai.show_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
 		}
@@ -223,7 +223,7 @@ int main(int argc, char **argv)
 		}
 
 		if (ai.encrypt_flag || ai.bits_given || ai.genkey_flag ||
-			ai.sign_flag || ai.verify_flag) {
+			ai.sign_flag || ai.verify_flag || ai.show_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
 		}
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
 				"You have to write the name of the output file: --outfile=filename\n");
 			goto final;
 		}
-		if (ai.encrypt_flag || ai.bits_given || ai.genkey_flag ||
+		if (ai.encrypt_flag || ai.bits_given || ai.genkey_flag || ai.show_flag ||
 			ai.decrypt_flag || ai.ascii_flag || ai.sign_flag || ai.verify_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 				"Error writing the encrypted private RSA key %s\n",outfile);
 
 		freePrivateRSAKey(rsa);
-		goto final;			
+		goto final;
 	}
 
 	/*
@@ -300,7 +300,7 @@ int main(int argc, char **argv)
 				"You have to write the name of the output file: --outfile=filename\n");
 			goto final;
 		}
-		if (ai.encrypt_flag || ai.bits_given || ai.genkey_flag ||
+		if (ai.encrypt_flag || ai.bits_given || ai.genkey_flag || ai.show_flag ||
 			ai.decrypt_flag || ai.ascii_flag || ai.sign_flag || ai.verify_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
@@ -317,7 +317,7 @@ int main(int argc, char **argv)
 				"Error writing the unencrypted private RSA key %s\n",outfile);
 
 		freePrivateRSAKey(rsa);
-		goto final;			
+		goto final;
 	}
 
 	/*
@@ -329,7 +329,7 @@ int main(int argc, char **argv)
 		int r;
 
 		if (ai.decrypt_flag || ai.bits_given || ai.genkey_flag ||
-			ai.encrypt_flag || ai.verify_flag) {
+			ai.encrypt_flag || ai.verify_flag || ai.show_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
 		}
@@ -373,7 +373,7 @@ int main(int argc, char **argv)
 		int r;
 
 		if (ai.decrypt_flag || ai.bits_given || ai.genkey_flag ||
-			ai.encrypt_flag || ai.sign_flag || ai.ascii_flag) {
+			ai.encrypt_flag || ai.sign_flag || ai.ascii_flag || ai.show_flag) {
 			fprintf(stderr, "Wrong combination of parameters\n");
 			goto final;
 		}
@@ -384,7 +384,7 @@ int main(int argc, char **argv)
 			printf
 			    ("File %s verified and extracted successfuly\n",infile);
 			ret = EXIT_SUCCESS;
-		} 
+		}
 		else if (r == SIGNATURE_BAD)
 			fprintf(stderr,
 				"The file %s has in incorrect signature\n",
@@ -405,6 +405,43 @@ int main(int argc, char **argv)
 		else if (r == ENCRYPTION_WRITE_FILE_ERROR)
 			fprintf(stderr, "Error writing the outfile");
 		goto final;
+	}
+
+	/*
+		6.1 Show a public or private RSA key
+	*/
+	if(ai.show_flag && ai.keyfile_given)
+	{
+		char *keyfile;
+		PublicRSAKey rsap;
+		PrivateRSAKey rsa;
+
+		if (ai.decrypt_flag || ai.bits_given || ai.genkey_flag ||
+			ai.encrypt_flag || ai.sign_flag || ai.ascii_flag) {
+			fprintf(stderr, "Wrong combination of parameters\n");
+			goto final;
+		}
+		keyfile = ai.keyfile_arg;
+
+		if ((rsap = bdReadPublicRSAKeyFromFile(keyfile)) != NULL) {
+			printf("The contents of the public RSA key are\n");
+			spPrintRSAPublicKey(rsap);
+			freePublicRSAKey(rsap);
+			goto final;
+		}
+		if ((rsa = bdReadPrivateRSAKeyFromFile(keyfile)) != NULL) {
+			printf("The contents of the private RSA key are\n");
+			spPrintRSAPrivateKey(rsa);
+			freePrivateRSAKey(rsa);
+			goto final;
+		}
+		if ((rsa = bdReadEncryptedPrivateRSAKeyFromFile(infile)) != NULL) {
+			printf("The contents of the private RSA key are\n");
+			spPrintRSAPrivateKey(rsa);
+			freePrivateRSAKey(rsa);
+			goto final;
+		}
+		printf("I can't read the public or private RSA key in %s\n",keyfile);
 	}
 
 	/*

@@ -23,5 +23,8 @@ cmdline.c: cmdline.ggo
 
 all: $(TARGET)
 
+install: $(TARGET)
+	cp $(TARGET) /usr/local/bin/
+
 clean:
 	rm -f $(OBJECTS) $(TARGET)

@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -25,6 +25,8 @@
 \font_osf false
 \font_sf_scale 95 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -54,6 +56,7 @@
 \suppress_date false
 \justification true
 \use_refstyle 0
+\use_minted 0
 \index Índex
 \shortcut idx
 \color #008000
@@ -69,7 +72,10 @@
 \tocdepth 3
 \paragraph_separation skip
 \defskip medskip
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 2
 \paperpagestyle headings
@@ -486,7 +492,7 @@ If the length
 
 , then the first bit of the first byte is 
 \family typewriter
-0
+1
 \family default
  and the remaining seven bits stores the number of bytes needed to represent
  
@@ -527,13 +533,22 @@ n=202+86b+147b^{2}+108b^{3}+83b^{4}+3b^{5}
 
 \end_inset
 
-and we need 5 bytes to encode the value, i.
- e., the length is 5.
- Then, the integer is encode with 7 bytes,
+and we need 7 bytes to encode the value, i.
+ e., the length is 7.
+ Then, the integer is encode with a total of 9 bytes,
 \begin_inset Formula 
 \[
 \begin{array}{|c|c|c|c|c|c|c|c|}
-\hline 2 & 5 & 3 & 83 & 108 & 147 & 86 & 202\\\hline \end{array}
+\hline 2 & 7 & 3 & 83 & 108 & 147 & 86 & 202\\\hline \end{array}
+\]
+
+\end_inset
+
+and in hexadecimal the encoding is
+\begin_inset Formula 
+\[
+\begin{array}{|c|c|c|c|c|c|c|c|}
+\hline 02 & 07 & 03 & 53 & 6C & 93 & 56 & CA\\\hline \end{array}
 \]
 
 \end_inset
@@ -627,6 +642,7 @@ The explanation can be found in
 LatexCommand href
 name "https://crypto.stackexchange.com"
 target "https://crypto.stackexchange.com/questions/29115/how-is-oid-2a-86-48-86-f7-0d-parsed-as-1-2-840-113549"
+literal "false"
 
 \end_inset
 

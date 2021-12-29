@@ -2,11 +2,11 @@
 * Filename:   mcersa.h
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
+* Disclaimer: This code is presented "as is" and it has been written to
+*             implement the RSA encryption and decryption algorithm for
+*             educational purposes and should not be used in contexts that
 *             need cryptographically secure implementation
-*	    
+*
 * License:    This library  is free software; you can redistribute it and/or
 *             modify it under the terms of either:
 *
@@ -79,15 +79,15 @@ typedef big_digit *BD;
 
 typedef struct {
 	BD n;			// Modulo
-	BD ek;			// Encryption key 
+	BD ek;			// Encryption key
 } public_rsa_key;
 typedef public_rsa_key *PublicRSAKey;
 
 typedef struct {
 	PublicRSAKey pub;
 	BD p;			// Prime p
-	BD q;			// Prime q 
-	BD dk;			// Decryption key 
+	BD q;			// Prime q
+	BD dk;			// Decryption key
 	BD kp;			// dk mod (p - 1)
 	BD kq;			// dk mod (q - 1)
 	BD c2;			// q^(-1) mod (p)
@@ -189,10 +189,9 @@ int bdSubtractUnsignedTo(BD n, BD z, size_t pos);
 /*
   Multiplication
  */
-BD karatsuba_simple(BD z0, BD z1, size_t m, size_t ndigits);
-BD karatsuba_general(BD z2, BD z, BD z0, size_t m, size_t ndigits);
 BD bdMultiplySimpleBD(BD n1, BD n2);
-BD bdMultiplyKaratsubaBD(BD n1, BD n2);
+BD bdMultiplyKaratsubaSimple(BD l, BD s, size_t m);
+BD bdMultiplyKaratsuba(BD l, BD s, size_t m);
 BD bdMultiplyBD(BD n1, BD n2);
 uint8_t bdMultiplyBDBy(BD * n1, BD n2);
 uint8_t bdExponentialBDToPowerOfTwo(BD * n, size_t power);

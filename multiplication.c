@@ -2,11 +2,11 @@
 * Filename:   multiplication.c
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
+* Disclaimer: This code is presented "as is" and it has been written to
+*             implement the RSA encryption and decryption algorithm for
+*             educational purposes and should not be used in contexts that
 *             need cryptographically secure implementation
-*	    
+*
 * License:    This library  is free software; you can redistribute it and/or
 *             modify it under the terms of either:
 *
@@ -61,66 +61,7 @@ BD bdMultiplySimpleBD(BD n1, BD n2)
 	return n;
 }
 
-/*
-  Karatsuba
-*/
-
-BD karatsuba_simple(BD z0, BD z1, size_t m, size_t ndigits)
-{
-	BD n;
-	if ((n = spInitWithAllocBD(ndigits)) == NULL)
-		return NULL;
-	n->used = ndigits;
-	n->sign = 1;
-	if (bdAddUnsignedTo(n, z0, 0) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	if (bdAddUnsignedTo(n, z1, m) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	return n;
-}
-
-BD karatsuba_general(BD z2, BD z, BD z0, size_t m, size_t ndigits)
-{
-	BD n;
-	if ((n = spInitWithAllocBD(ndigits)) == NULL)
-		return NULL;
-	n->used = ndigits;
-
-	if (bdAddUnsignedTo(n, z2, 2 * m) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	if (bdAddUnsignedTo(n, z, m) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	if (bdAddUnsignedTo(n, z0, 0) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	if (bdSubtractUnsignedTo(n, z2, m) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	if (bdSubtractUnsignedTo(n, z0, m) < 0)
-	{
-		freeBD(n);
-		return NULL;
-	}
-	return n;
-}
-
-BD bdMultiplyKaratsubaBD(BD n1, BD n2)
+BD bdMultiplyBD(BD n1, BD n2)
 {
 	BD l, s;
 	size_t m;
@@ -140,53 +81,22 @@ BD bdMultiplyKaratsubaBD(BD n1, BD n2)
 		return bdMultiplySimpleBD(l, s);
 
 	/*
-		Primer cas recursiu. l->used
+		Primer cas recursiu. s->used < l->used / 2
 	*/
-	m = (l->used % 2) == 0 ? l->used / 2 : l->used / 2 + 1;
-	BD x1, x0;
-	x0 = spPartOfBD(l, 0, m);
-	x1 = spPartOfBD(l, m, l->used - m);
+	m = l->used / 2;
+	if (2*m < l->used)
+	 	m += 1;
 	if (s->used <= m)
-	{
-		BD z0, z1, r;
-		z0 = bdMultiplyKaratsubaBD(x0, s);
-		z1 = bdMultiplyKaratsubaBD(x1, s);
-		r = karatsuba_simple(z0, z1, m, l->used + s->used);
-		freeBD(z0);
-		freeBD(z1);
-		free(x0);
-		free(x1);
-		r->sign = l->sign * s->sign;
-		return r;
-	}
-	/*
-		Segon cas recursiu
-	*/
-	BD y1, y0, s1, s2, z0, z, z2, r;
-	y0 = spPartOfBD(s, 0, m);
-	y1 = spPartOfBD(s, m, s->used - m);
-	z0 = bdMultiplyKaratsubaBD(x0, y0);
-	z2 = bdMultiplyKaratsubaBD(x1, y1);
-	s1 = bdAddBD(x1, x0);
-	s2 = bdAddBD(y1, y0);
-	z = bdMultiplyKaratsubaBD(s1, s2);
-	r = karatsuba_general(z2, z, z0, m, l->used + s->used);
-	freeBD(z0);
-	freeBD(z2);
-	freeBD(z);
-	freeBD(s1);
-	freeBD(s2);
-	free(x0);
-	free(x1);
-	free(y0);
-	free(y1);
-	r->sign = l->sign * s->sign;
-	return r;
-}
+		return bdMultiplyKaratsubaSimple(l,s,m);
 
-BD bdMultiplyBD(BD n1, BD n2)
-{
-	return bdMultiplyKaratsubaBD(n1, n2);
+	/*
+		Segon cas recursiu, s->used < 2 * l->used / 3
+	m = l->used / 3;
+	if (3*m < l->used)
+	 	m += 1;
+	if (s->used <= 2*m)
+	*/
+	return bdMultiplyKaratsuba(l,s,m);
 }
 
 uint8_t bdMultiplyBDBy(BD * n1, BD n2)

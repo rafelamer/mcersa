@@ -2,11 +2,11 @@
 * Filename:   test07.c
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
+* Disclaimer: This code is presented "as is" and it has been written to
+*             implement the RSA encryption and decryption algorithm for
+*             educational purposes and should not be used in contexts that
 *             need cryptographically secure implementation
-*	    
+*
 * License:    This file is free software; you can redistribute it and/or
 *             modify it under the terms of:
 *
@@ -45,6 +45,8 @@ int main(int argc, char **argv)
 
 	printf("n = n1 ^ n2 = ");
 	spPrintDecimal(n);
+
+	printf("\n\nBits in n = %lu\n", spBitsInBD(n));
 
 	ret = EXIT_SUCCESS;
 

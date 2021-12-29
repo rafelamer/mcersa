@@ -1,5 +1,5 @@
 /**********************************************************************************
-* Filename:   test02.c
+* Filename:   test03.c
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
 * Disclaimer: This code is presented "as is" and it has been written to
@@ -19,51 +19,31 @@
 #include <mce/mcersa.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
 
 int main(int argc, char **argv)
 {
-	BD n1, n2, n;
+	BD n1, n2, n, r;
 	int ret;
-	clock_t begin, end;
-	double time_spent;
 
-	n1 = n2 = n = NULL;
 	ret = EXIT_FAILURE;
-	if ((n1 = spRandomBD(BYTES_PER_DIGIT * 70000)) == NULL)
+	n1 = n2 = n = NULL;
+	if ((n1 = spReadBDFromFile("n1.txt")) == NULL)
+		goto final;
+	if ((n2 = spReadBDFromFile("n2.txt")) == NULL)
+		goto final;
+	if ((n = spReadBDFromFile("n.txt")) == NULL)
 		goto final;
 
-	if ((n2 = spRandomBD(BYTES_PER_DIGIT * 70000)) == NULL)
+	if ((r = bdMultiplyBD(n1, n2)) == NULL)
 		goto final;
 
-	printf("Bits in n1 = %lu\n", spBitsInBD(n1));
-
-	begin = clock();
-
-	if ((n = bdMultiplySimpleBD(n1, n2)) == NULL)
-		goto final;
-	freeBD(n);
-
-	end = clock();
-	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-	printf("Time needed by classical algorithm: %g seconds \n\n",
-	       time_spent);
-
-	begin = clock();
-
-	if ((n = bdMultiplyBD(n1, n2)) == NULL)
-		goto final;
-
-	end = clock();
-	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-	printf("Time needed by Karatsuba algorithm: %g seconds \n\n",
-	       time_spent);
+	if (spCompareAbsoluteValues(n, r) == 0)
+		printf("Result OK\n");
 
 	ret = EXIT_SUCCESS;
 
  final:
+	freeBD(r);
 	freeBD(n);
 	freeBD(n1);
 	freeBD(n2);

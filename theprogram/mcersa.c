@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	   3.2 Decrypts a file encrypted with a private RSA key
+	   3.2 Decrypts a file encrypted with a public RSA key
 	 */
 	if (ai.decrypt_flag && ai.keyfile_given) {
 		char *infile, *outfile, *keyfile;

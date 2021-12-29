@@ -2,11 +2,11 @@
 * Filename:   test01.c
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
+* Disclaimer: This code is presented "as is" and it has been written to
+*             implement the RSA encryption and decryption algorithm for
+*             educational purposes and should not be used in contexts that
 *             need cryptographically secure implementation
-*	    
+*
 * License:    This file is free software; you can redistribute it and/or
 *             modify it under the terms of:
 *
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	spPrintDecimal(n3);
 
 	/*
-	   Addition
+	   Addition n = n1 + n2
 	 */
 	if ((n = bdAddBD(n1, n2)) == NULL)
 		goto final;
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 	freeBD(n);
 
 	/*
-	   Subtraction
+	   Subtraction n = n3 - n1
 	 */
 	if ((n = bdSubtractBD(n3, n1)) == NULL)
 		goto final;
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 	freeBD(n);
 
 	/*
-	   Multiplication
+	   Multiplication n = n3 * n2
 	 */
 	if ((n = bdMultiplyBD(n3, n2)) == NULL)
 		goto final;
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 	spPrintDecimal(n);
 
 	/*
-	   Bits, bytes and digits
+	   Bits, bytes and digits. A digit is a long unsigned integer
 	 */
 	printf("Bits in n1 = %lu\n", spBitsInBD(n1));
 	printf("Bytes in n1 = %lu\n", spBytesInBD(n1));

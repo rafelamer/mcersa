@@ -192,6 +192,7 @@ int bdSubtractUnsignedTo(BD n, BD z, size_t pos);
 BD bdMultiplySimpleBD(BD n1, BD n2);
 BD bdMultiplyKaratsubaSimple(BD l, BD s, size_t m);
 BD bdMultiplyKaratsuba(BD l, BD s, size_t m);
+BD bdMultiplyToomCook(BD l, BD s, size_t m);
 BD bdMultiplyBD(BD n1, BD n2);
 uint8_t bdMultiplyBDBy(BD * n1, BD n2);
 uint8_t bdExponentialBDToPowerOfTwo(BD * n, size_t power);

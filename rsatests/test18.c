@@ -1,5 +1,5 @@
 /**********************************************************************************
-* Filename:   test02.c
+* Filename:   test18.c
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
 * Disclaimer: This code is presented "as is" and it has been written to
@@ -19,47 +19,36 @@
 #include <mce/mcersa.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include <string.h>
 
 int main(int argc, char **argv)
 {
 	BD n1, n2, n;
 	int ret;
-	clock_t begin, end;
-	double time_spent;
 
 	n1 = n2 = n = NULL;
 	ret = EXIT_FAILURE;
-	if ((n1 = spRandomBD(BYTES_PER_DIGIT * 70000)) == NULL)
+	if ((n1 = spRandomBD(BYTES_PER_DIGIT * 7000)) == NULL)
 		goto final;
 
-	if ((n2 = spRandomBD(BYTES_PER_DIGIT * 70000)) == NULL)
+	if ((n2 = spRandomBD(BYTES_PER_DIGIT * 7000)) == NULL)
 		goto final;
-
-	printf("Bits in n1 = %lu\n", spBitsInBD(n1));
-
-	begin = clock();
-
-	if ((n = bdMultiplySimpleBD(n1, n2)) == NULL)
-		goto final;
-	freeBD(n);
-
-	end = clock();
-	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-
-	printf("Time needed by classical algorithm: %g seconds \n\n",
-	       time_spent);
-
-	begin = clock();
 
 	if ((n = bdMultiplyBD(n1, n2)) == NULL)
 		goto final;
 
-	end = clock();
-	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	unsigned char *s;
+  s = spBDToString(n1, 10);
+	writeFileBinaryMode("n1.txt",s,strlen(s));
+	freeString(s);
 
-	printf("Time needed by Karatsuba algorithm: %g seconds \n\n",
-	       time_spent);
+	s = spBDToString(n2, 10);
+	writeFileBinaryMode("n2.txt",s,strlen(s));
+	freeString(s);
+
+	s = spBDToString(n, 10);
+	writeFileBinaryMode("n.txt",s,strlen(s));
+	freeString(s);
 
 	ret = EXIT_SUCCESS;
 

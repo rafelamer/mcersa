@@ -2,11 +2,11 @@
 * Filename:   addition.c
 * Author:     Rafel Amer (rafel.amer AT upc.edu)
 * Copyright:  Rafel Amer 2018
-* Disclaimer: This code is presented "as is" and it has been written to 
-*             implement the RSA encryption and decryption algorithm for 
-*             educational purposes and should not be used in contexts that 
+* Disclaimer: This code is presented "as is" and it has been written to
+*             implement the RSA encryption and decryption algorithm for
+*             educational purposes and should not be used in contexts that
 *             need cryptographically secure implementation
-*	    
+*
 * License:    This library  is free software; you can redistribute it and/or
 *             modify it under the terms of either:
 *
@@ -38,7 +38,7 @@ int bdCompareAbsoluteValues(BD n1, BD n2)
 		return 1;
 	if (t1 < t2)
 		return -1;
-	
+
 	/* t1 == t2 */
 	for (i = 0; i < t1; i++)
 	{
@@ -57,7 +57,7 @@ BD bdAddAbsoluteValues(BD n1, BD n2)
 {
 	BD l, s, n;
 	int cmp;
-	
+
 	cmp = bdCompareAbsoluteValues(n1, n2);
 	if (cmp >= 0)
 	{
@@ -70,13 +70,13 @@ BD bdAddAbsoluteValues(BD n1, BD n2)
 	}
 	if ((n = spCopyBD(l)) == NULL)
 		return NULL;
-	
+
 	size_t i;
 	digit t;
 	t = 0;
 	for (i = 0; i < s->used; i++)
 		t = spAddTo(n->digits + i, s->digits[i], t);
-	
+
 	while (t > 0)
 	{
 		if (n->used == n->alloc)
@@ -96,8 +96,8 @@ BD bdAddAbsoluteValues(BD n1, BD n2)
 uint8_t bdAddAbsoluteValueTo(BD n1, BD n2)
 /*
   The algorithm uses the absolute values of n1 and n2
-	
-  n1 = n1 + n2 
+
+  n1 = n1 + n2
 */
 {
 	size_t i;
@@ -192,6 +192,46 @@ BD bdAddBD(BD n1, BD n2)
 	n = bdSubtractAbsoluteValues(n1, n2, &sign);
 	n->sign = n1->sign * sign;
 	return n;
+}
+
+BD bdSubtrackBD(BD n1, BD n2)
+/*
+	Returns n1 - n2
+*/
+{
+	BD n;
+	n2->sign *= -1;
+	n = bdAddBD(n1,n2);
+	n2->sign *= -1;
+	return n;
+}
+
+BD dbAddMultipleBD(BD n1, BD n2, digit m,int8_t sign)
+{
+	BD t, n;
+	t = spCopyBD(n2);
+	if (m != 1)
+		if (!spMultiplyByDigitBD(t,m))
+			return NULL;
+	t->sign *= sign;
+	n = bdAddBD(t,n1);
+	freeBD(t);
+	return n;
+}
+
+uint8_t dbAddMultipleBDTo(BD * n1, BD n2, digit m,int8_t sign)
+{
+	BD t, n;
+	t = spCopyBD(n2);
+	if(m != 1)
+		if (!spMultiplyByDigitBD(t,m))
+			return 0;
+	t->sign *= sign;
+	n = bdAddBD(t,*n1);
+	freeBD(*n1);
+	freeBD(t);
+	*n1 = n;
+	return 1;
 }
 
 int bdAddUnsignedTo(BD n, BD z, size_t pos)

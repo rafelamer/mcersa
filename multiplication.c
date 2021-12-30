@@ -91,12 +91,13 @@ BD bdMultiplyBD(BD n1, BD n2)
 
 	/*
 		Segon cas recursiu, s->used < 2 * l->used / 3
+	*/
 	m = l->used / 3;
 	if (3*m < l->used)
 	 	m += 1;
 	if (s->used <= 2*m)
-	*/
-	return bdMultiplyKaratsuba(l,s,m);
+		return bdMultiplyKaratsuba(l,s,m);
+	return bdMultiplyToomCook(l,s,m);
 }
 
 uint8_t bdMultiplyBDBy(BD * n1, BD n2)

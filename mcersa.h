@@ -166,10 +166,8 @@ void spPrintRaw(BD n);
 void spPrintDecimal(BD n);
 void spPrintBase2(BD n);
 void spPrintBytes(BD n);
-unsigned char *readFileBinaryMode(const char *filename, size_t * len,
-				  size_t * alloc);
-int writeFileBinaryMode(const char *filename, unsigned char *data,
-			size_t length);
+unsigned char *readFileBinaryMode(const char *filename, size_t * len,size_t * alloc);
+int writeFileBinaryMode(const char *filename, unsigned char *data,size_t length);
 /*
   Addition
  */
@@ -178,7 +176,10 @@ BD bdAddAbsoluteValues(BD n1, BD n2);
 BD bdSubtractAbsoluteValues(BD n1, BD n2, int8_t * sign);
 void bdSubtractAbsoluteValuesTo(BD n1, BD n2);
 uint8_t bdAddAbsoluteValueTo(BD n1, BD n2);
+uint8_t dbAddMultipleBDTo(BD * n1, BD n2, digit m,int8_t sign);
+BD dbAddMultipleBD(BD n1, BD n2, digit m,int8_t sign);
 BD bdAddBD(BD n1, BD n2);
+BD bdSubtrackBD(BD n1, BD n2);
 int bdAddUnsignedTo(BD n, BD z, size_t pos);
 /*
   Subtraction

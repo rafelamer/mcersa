@@ -2,11 +2,11 @@
  * Filename:   sputil.c
  * Author:     Rafel Amer (rafel.amer AT upc.edu)
  * Copyright:  Rafel Amer 2018
- * Disclaimer: This code is presented "as is" and it has been written to 
- *             implement the RSA encryption and decryption algorithm for 
- *             educational purposes and should not be used in contexts that 
+ * Disclaimer: This code is presented "as is" and it has been written to
+ *             implement the RSA encryption and decryption algorithm for
+ *             educational purposes and should not be used in contexts that
  *             need cryptographically secure implementation
- *	    
+ *
  * License:    This library  is free software; you can redistribute it and/or
  *             modify it under the terms of either:
  *
@@ -96,7 +96,7 @@ uint8_t spAugmentDB(BD n)
 uint8_t spAugmentInSizeDB(BD n, size_t ndigits)
 {
 	if ((n->digits = (digit *)realloc(n->digits,(n->alloc + ndigits) * sizeof(digit))) == NULL)
-		return 0;	
+		return 0;
 	memset(n->digits + n->alloc, 0, ndigits * sizeof(digit));
 	n->alloc += ndigits;
 	return 1;
@@ -170,19 +170,19 @@ size_t spBitsInBD(BD n)
 	ndigits = spSizeOfBD(n);
 	if (ndigits == 0)
 		return 0;
-	
+
 	for (i = 0, mask = HIBITMASK; mask > 0; mask >>= 1, i++)
 	{
 		if (n->digits[ndigits - 1] & mask)
 			break;
 	}
 	bits = ndigits * BITS_PER_DIGIT - i;
-	
+
 	return bits;
 }
 
 size_t spBytesInBD(BD n)
-/* Returns number of significant bits in BD */
+/* Returns number of significant bytes in BD */
 {
 	size_t t;
 	t = spBitsInBD(n);
@@ -537,4 +537,3 @@ unsigned char *clearCcommentsInText(unsigned char *string,const unsigned char *b
 	}
 	return NULL;
 }
-

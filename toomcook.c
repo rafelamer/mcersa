@@ -27,49 +27,102 @@
 
 BD bdMultiplyToomCook(BD l, BD s,size_t m)
 {
+	/*
+		See https://en.wikipedia.org/wiki/Toom-Cook_multiplication
+
+		Split the numbers
+	*/
 	BD x2, x1, x0, y2, y1, y0;
   x0 = spPartOfBD(l, 0, m);
 	x1 = spPartOfBD(l, m, m);
 	x2 = spPartOfBD(l, 2*m, l->used - 2*m);
 	y0 = spPartOfBD(s, 0, m);
 	y1 = spPartOfBD(s, m, m);
-	y2 = spPartOfBD(s, 2*m, l->used - 2*m);
+	y2 = spPartOfBD(s, 2*m, s->used - 2*m);
 
-	BD p, p0, p1, pm1, pm2, pinf;
-	p0 = x0;
+	/*
+		Evaluation of numbers p1, pm1 and pm2
+		Remember thats p0 = x0 and pinf = x2
+	*/
+	BD p, p1, pm1, pm2;
+	p = p1 = pm1 = pm2 = NULL;
 	p = bdAddBD(x0,x2);
-	p1 = bdAddBD(p,x1)
-	x1->sign = -1
-	pm1 = bdAddBD(p,x1)
-	x1->sign = 1
+	p1 = bdAddBD(p,x1);
+	pm1 = bdSubtrackBD(p,x1);
+	pm2 = bdAddBD(pm1,x2);
+	spMultiplyByDigitBD(pm2,2);
+	dbAddMultipleBDTo(&pm2,x0,1,-1);
+	freeBD(p);
 
+	/*
+		Evaluation of numbers q1, qm1 and qm2
+		Remember thats q0 = y0 and qinf = y2
+	*/
+	BD q1, qm1, qm2;
+	q1 = qm1 = qm2 = NULL;
+	p = bdAddBD(y0,y2);
+	q1 = bdAddBD(p,y1);
+	qm1 = bdSubtrackBD(p,y1);
+	qm2 = bdAddBD(qm1,y2);
+	spMultiplyByDigitBD(qm2,2);
+	dbAddMultipleBDTo(&qm2,y0,1,-1);
+	freeBD(p);
 
+	/*
+		Pointwise multiplication
+	*/
+	BD r0, r1, rm1, rm2, rinf;
+	r0 = r1 = rm1 = rm2 = rinf = NULL;
+	r0 = bdMultiplyBD(x0,y0);
+	r1 = bdMultiplyBD(p1,q1);
+	rm1 = bdMultiplyBD(pm1,qm1);
+	rm2 = bdMultiplyBD(pm2,qm2);
+	rinf = 	bdMultiplyBD(x2,y2);
+	freeBD(p1);
+	freeBD(pm1);
+	freeBD(pm2);
+	freeBD(q1);
+	freeBD(qm1);
+	freeBD(qm2);
+	/*
+		Interpolation
+		Remember that s0 = r0 and s4 = rinf
+	*/
+	BD s1, s2, s3;
+	digit remainder;
+	s1 = s2 = s3 = NULL;
+	s3 = bdSubtrackBD(rm2,r1);
+	spDivideByDigitBD(s3,3,&remainder);
+	s1 = bdSubtrackBD(r1,rm1);
+	spDivideByDigitBD(s1,2,&remainder);
+	s2 = bdSubtrackBD(rm1,r0);
+	s3->sign *= -1;
+	dbAddMultipleBDTo(&s3,s2,1,1);
+	spDivideByDigitBD(s3,2,&remainder);
+	dbAddMultipleBDTo(&s3,rinf,2,1);
+	dbAddMultipleBDTo(&s2,s1,1,1);
+	dbAddMultipleBDTo(&s2,rinf,1,-1);
+	dbAddMultipleBDTo(&s1,s3,1,-1);
+	freeBD(r1);
+	freeBD(rm1);
+	freeBD(rm2);
 
-
-
-
-
-
-
-
-
-
-  BD s1, s2, z0, z, z2, r;
-  z0 = bdMultiplyBD(x0, y0);
-	z2 = bdMultiplyBD(x1, y1);
-	s1 = bdAddBD(x1, x0);
-	s2 = bdAddBD(y1, y0);
-	z = bdMultiplyBD(s1, s2);
-	r = post_karatsuba(z2, z, z0, m, l->used + s->used);
-	freeBD(z0);
-	freeBD(z2);
-	freeBD(z);
+	/*
+		Recomposition
+	*/
+	spShiftToLeftNumberOfDigits(s1,m);
+	dbAddMultipleBDTo(&s1,r0,1,1);
+	freeBD(r0);
+	spShiftToLeftNumberOfDigits(s2,2*m);
+	dbAddMultipleBDTo(&s2,s1,1,1);
 	freeBD(s1);
+	spShiftToLeftNumberOfDigits(s3,3*m);
+	dbAddMultipleBDTo(&s3,s2,1,1);
 	freeBD(s2);
-	free(x0);
-	free(x1);
-	free(y0);
-	free(y1);
-	r->sign = l->sign * s->sign;
-	return r;
+	spShiftToLeftNumberOfDigits(rinf,4*m);
+	dbAddMultipleBDTo(&rinf,s3,1,1);
+	freeBD(s3);
+
+	rinf->sign = l->sign * s->sign;
+	return rinf;
 }

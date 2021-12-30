@@ -30,15 +30,17 @@ int main(int argc, char **argv)
 
 	n1 = n2 = n = NULL;
 	ret = EXIT_FAILURE;
-	if ((n1 = spRandomBD(BYTES_PER_DIGIT * 70000)) == NULL)
+	if ((n1 = spRandomBD(BYTES_PER_DIGIT * 400000)) == NULL)
 		goto final;
 
-	if ((n2 = spRandomBD(BYTES_PER_DIGIT * 70000)) == NULL)
+	if ((n2 = spRandomBD(BYTES_PER_DIGIT * 3500000)) == NULL)
 		goto final;
 
+	/*
 	printf("Bits in n1 = %lu\n", spBitsInBD(n1));
 
 	begin = clock();
+
 
 	if ((n = bdMultiplySimpleBD(n1, n2)) == NULL)
 		goto final;
@@ -49,7 +51,7 @@ int main(int argc, char **argv)
 
 	printf("Time needed by classical algorithm: %g seconds \n\n",
 	       time_spent);
-
+*/
 	begin = clock();
 
 	if ((n = bdMultiplyBD(n1, n2)) == NULL)
@@ -58,7 +60,7 @@ int main(int argc, char **argv)
 	end = clock();
 	time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-	printf("Time needed by Karatsuba algorithm: %g seconds \n\n",
+	printf("Time needed by Tom-Cook and Karatsuba algorithm: %g seconds \n\n",
 	       time_spent);
 
 	ret = EXIT_SUCCESS;

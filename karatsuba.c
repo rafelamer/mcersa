@@ -84,7 +84,6 @@ BD bdMultiplyKaratsubaSimple(BD l, BD s,size_t m)
 {
   BD x1, x0;
   BD z0, z1, r;
-
   x0 = spPartOfBD(l, 0, m);
 	x1 = spPartOfBD(l, m, l->used - m);
 
